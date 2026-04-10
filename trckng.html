@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="trckng"/>
+<title>trckng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f3;--bg3:#f0ede8;
+  --text:#1a1a1a;--text2:#6b6b6b;--text3:#9b9b9b;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --green:#27500A;--greenbg:#EAF3DE;--greenborder:#97C459;
+  --yellow:#854F0B;--yellowbg:#FEFCE8;--yellowborder:#FDE047;
+  --red:#791F1F;--redbg:#FCEBEB;--redborder:#F09595;
+  --blue:#0C447C;--bluebg:#E6F1FB;
+  --radius:8px;--radius-lg:12px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg3);}
+body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;}
+.app{max-width:480px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--bg3);overflow:hidden;}
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.screen.active{display:flex;}
+.hdr{padding:14px 18px 12px;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.wm{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;letter-spacing:-0.5px;color:var(--text);}
+.hbtn{font-size:13px;color:var(--text2);cursor:pointer;padding:7px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:none;font-family:'DM Sans',sans-serif;}
+.hbtn:active{background:var(--bg2);}
+.bbtn{font-size:14px;color:var(--text2);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
+.htitle{font-size:14px;font-weight:500;color:var(--text);}
+.nav{display:flex;background:var(--bg);border-top:0.5px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);}
+.ni{flex:1;padding:11px 8px 10px;text-align:center;cursor:pointer;font-size:11px;color:var(--text3);border:none;background:none;font-family:'DM Sans',sans-serif;}
+.ni.active{color:var(--text);font-weight:500;}
+.ni-ic{font-size:16px;display:block;margin-bottom:2px;}
+.con{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
+.lbl{font-size:11px;font-weight:500;color:var(--text2);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:9px;display:block;}
+.fs{margin-bottom:20px;}
+.mo-lbl{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:9px;padding:0 2px;}
+.sc{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:9px;}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.sc-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.sdt{font-size:12px;color:var(--text2);}
+.spill{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--text2);}
+.ttag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
+.t-tr{background:#E6F1FB;color:#0C447C;}
+.t-co{background:#FAECE7;color:#712B13;}
+.t-re{background:#EAF3DE;color:#27500A;}
+.t-sc{background:#EEEDFE;color:#3C3489;}
+.completed-line{font-size:12px;font-weight:500;color:var(--text);font-family:'DM Mono',monospace;margin-bottom:5px;line-height:1.4;}
+.sn{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.sf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.qbadge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
+.q45{background:var(--greenbg);color:var(--green);}
+.q3{background:var(--yellowbg);color:var(--yellow);border:0.5px solid var(--yellowborder);}
+.q12{background:var(--redbg);color:var(--red);}
+.ach{display:flex;gap:4px;flex-wrap:wrap;}
+.ac{font-size:11px;padding:2px 7px;background:var(--bg2);border-radius:20px;color:var(--text2);}
+.sc-acts{display:flex;gap:4px;margin-top:10px;border-top:0.5px solid var(--border);padding-top:9px;}
+.ebtn{font-size:12px;color:var(--text2);background:none;border:none;cursor:pointer;padding:5px 9px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;}
+.ebtn:active{background:var(--bg2);}
+.dbtn{font-size:12px;color:var(--red);background:none;border:none;cursor:pointer;padding:5px 9px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;}
+.dbtn:active{background:var(--redbg);}
+.cdel{display:none;align-items:center;gap:8px;margin-top:9px;border-top:0.5px solid var(--border);padding-top:9px;flex-wrap:wrap;}
+.cdel.show{display:flex;}
+.cdel span{font-size:13px;color:var(--text2);}
+.cdel button{font-size:12px;padding:5px 12px;border-radius:var(--radius);cursor:pointer;font-family:'DM Sans',sans-serif;border:0.5px solid var(--border2);background:none;color:var(--text2);}
+.cdel .yes-del{background:var(--redbg);color:var(--red);border-color:var(--redborder);}
+.tsel{display:flex;gap:6px;flex-wrap:wrap;}
+.tbtn{flex:1;min-width:60px;padding:10px 6px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);text-align:center;}
+.tbtn.sel{border-color:var(--border2);color:var(--text);background:var(--bg2);font-weight:500;}
+.timesel{display:flex;gap:6px;}
+.tmbtn{flex:1;padding:10px 6px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);text-align:center;}
+.tmbtn.sel{border-color:var(--border2);color:var(--text);background:var(--bg2);font-weight:500;}
+.qsel{display:flex;gap:6px;}
+.qsbtn{flex:1;padding:13px 4px;border-radius:var(--radius);border:0.5px solid var(--border);background:var(--bg);font-size:17px;font-weight:500;cursor:pointer;font-family:'DM Mono',monospace;color:var(--text2);text-align:center;}
+.qsbtn.s1,.qsbtn.s2{background:var(--redbg);color:var(--red);border-color:var(--redborder);}
+.qsbtn.s3{background:var(--yellowbg);color:var(--yellow);border-color:var(--yellowborder);}
+.qsbtn.s4,.qsbtn.s5{background:var(--greenbg);color:var(--green);border-color:var(--greenborder);}
+.q-hint{display:grid;grid-template-columns:2fr 1fr 2fr;font-size:11px;color:var(--text3);margin-top:6px;}
+.q-hint span:last-child{text-align:right;}
+.q-hint span:nth-child(2){text-align:center;}
+textarea{width:100%;padding:13px 14px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);resize:none;line-height:1.7;-webkit-appearance:none;}
+textarea:focus{outline:none;border-color:var(--border2);}
+textarea::placeholder{color:var(--text3);}
+.ifield{width:100%;padding:11px 13px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:9px;-webkit-appearance:none;}
+.ifield:focus{outline:none;border-color:var(--border2);}
+.ifield::placeholder{color:var(--text3);}
+.sbtn{width:100%;padding:15px;background:var(--text);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.sbtn:active{opacity:0.85;}
+.chk-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:0.5px solid var(--border);cursor:pointer;}
+.chk-row:last-child{border-bottom:none;}
+.chk-c{width:22px;height:22px;border-radius:50%;border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.chk-c.on{background:var(--text);border-color:var(--text);color:#fff;}
+.chk-n{font-size:14px;color:var(--text);}
+.chk-e{font-size:12px;color:var(--text2);}
+.results-hint{font-size:12px;color:var(--text3);padding:10px 0 4px;font-style:italic;}
+.arb{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:9px;}
+.arb-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:11px;}
+.rep-hdr{display:grid;grid-template-columns:22px 1fr 1fr 1fr 24px;gap:5px;margin-bottom:5px;}
+.rep-hdr span{font-size:10px;color:var(--text3);letter-spacing:0.04em;text-transform:uppercase;}
+.rep-row{display:grid;grid-template-columns:22px 1fr 1fr 1fr 24px;gap:5px;align-items:center;margin-bottom:5px;}
+.rep-n{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;}
+.ri{padding:9px 8px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg2);font-size:12px;font-family:'DM Mono',monospace;color:var(--text);width:100%;-webkit-appearance:none;}
+.ri:focus{outline:none;border-color:var(--border2);}
+.ri::placeholder{color:var(--text3);}
+.add-rep{font-size:13px;color:var(--text2);background:none;border:0.5px dashed var(--border2);border-radius:var(--radius);padding:8px 13px;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;text-align:left;margin-top:5px;}
+.add-rep:active{background:var(--bg2);}
+.del-rep{font-size:15px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 2px;font-family:'DM Sans',sans-serif;line-height:1;text-align:center;}
+.del-rep:active{color:var(--red);}
+.divider{height:0.5px;background:var(--border);margin:4px 0 20px;}
+.av{width:36px;height:36px;border-radius:50%;background:var(--bluebg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--blue);flex-shrink:0;}
+.ar{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;gap:12px;}
+.ai{flex:1;}
+.an{font-size:14px;font-weight:500;color:var(--text);}
+.as2{font-size:12px;color:var(--text2);margin-top:2px;}
+.al{font-size:12px;color:var(--text3);}
+.add-ab{width:100%;padding:13px;border:0.5px dashed var(--border2);border-radius:var(--radius-lg);background:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;}
+.add-ab:active{background:var(--bg2);}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:13px;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 0 15px;}
+.cal-mo{font-size:16px;font-weight:500;color:var(--text);}
+.cal-nav{background:none;border:none;cursor:pointer;color:var(--text2);font-size:20px;padding:2px 10px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-dl{font-size:11px;color:var(--text3);text-align:center;padding-bottom:6px;}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;border-radius:50%;color:var(--text3);position:relative;flex-direction:column;cursor:default;}
+.cal-day.hs{color:var(--text);font-weight:500;}
+.cal-day.td{background:var(--bg2);}
+.cdot{width:5px;height:5px;border-radius:50%;margin-top:1px;}
+.cbadge{position:absolute;top:0;right:0;width:14px;height:14px;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:500;font-family:'DM Mono',monospace;background:var(--bluebg);color:var(--blue);}
+.tcard{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-top:18px;}
+.tcard-title{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.tbars{display:flex;gap:20px;align-items:flex-end;height:72px;padding:0 8px;}
+.tbc{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.tbf{width:100%;border-radius:3px 3px 0 0;}
+.tbl{font-size:11px;color:var(--text3);}
+.tbv{font-size:15px;font-weight:500;color:var(--text);}
+.tbar-base{height:0.5px;background:var(--border);margin:0 8px;}
+.leg{display:flex;gap:14px;margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border);flex-wrap:wrap;}
+.li{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);}
+.ld{width:8px;height:8px;border-radius:50%;}
+.empty{text-align:center;padding:60px 24px;color:var(--text2);font-size:14px;line-height:1.8;}
+.empty strong{display:block;font-size:16px;color:var(--text);margin-bottom:8px;font-weight:500;}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- FEED -->
+  <div class="screen active" id="screen-feed">
+    <div class="hdr"><span class="wm">trckng</span><button class="hbtn" onclick="go('log')">+ Session</button></div>
+    <div class="con" id="feed-con"></div>
+    <div class="nav">
+      <button class="ni active" id="nav-feed" onclick="nav('feed',this)"><span class="ni-ic">≡</span>Log</button>
+      <button class="ni" id="nav-calendar" onclick="nav('calendar',this)"><span class="ni-ic">▦</span>Calendar</button>
+      <button class="ni" id="nav-athletes" onclick="nav('athletes',this)"><span class="ni-ic">◉</span>Athletes</button>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="screen" id="screen-calendar">
+    <div class="hdr"><span class="wm">trckng</span></div>
+    <div class="con" id="cal-con"></div>
+    <div class="nav">
+      <button class="ni" onclick="nav('feed',this)"><span class="ni-ic">≡</span>Log</button>
+      <button class="ni active" onclick="nav('calendar',this)"><span class="ni-ic">▦</span>Calendar</button>
+      <button class="ni" onclick="nav('athletes',this)"><span class="ni-ic">◉</span>Athletes</button>
+    </div>
+  </div>
+
+  <!-- ATHLETES -->
+  <div class="screen" id="screen-athletes">
+    <div class="hdr"><span class="wm">trckng</span><button class="hbtn" onclick="go('add-athlete')">+ Athlete</button></div>
+    <div class="con" id="ath-con"></div>
+    <div class="nav">
+      <button class="ni" onclick="nav('feed',this)"><span class="ni-ic">≡</span>Log</button>
+      <button class="ni" onclick="nav('calendar',this)"><span class="ni-ic">▦</span>Calendar</button>
+      <button class="ni active" onclick="nav('athletes',this)"><span class="ni-ic">◉</span>Athletes</button>
+    </div>
+  </div>
+
+  <!-- ADD ATHLETE -->
+  <div class="screen" id="screen-add-athlete">
+    <div class="hdr"><button class="bbtn" onclick="go('athletes')">← Athletes</button><span class="htitle">New athlete</span><div style="width:80px"></div></div>
+    <div class="con">
+      <div class="fs"><label class="lbl">Name</label><input class="ifield" id="na-name" type="text" placeholder="Full name" autocomplete="off"/></div>
+      <div class="fs"><label class="lbl">Sport</label><input class="ifield" id="na-sport" type="text" placeholder="e.g. Athletics" autocomplete="off"/></div>
+      <div class="fs"><label class="lbl">Event / discipline</label><input class="ifield" id="na-event" type="text" placeholder="e.g. 400m hurdles" autocomplete="off"/></div>
+      <div class="fs"><label class="lbl">Date of birth</label><input class="ifield" id="na-dob" type="date"/></div>
+      <button class="sbtn" onclick="addAthlete()">Add athlete</button>
+    </div>
+  </div>
+
+  <!-- LOG SESSION -->
+  <div class="screen" id="screen-log">
+    <div class="hdr"><button class="bbtn" onclick="go('feed')">← Back</button><span class="htitle">Log session</span><div style="width:80px"></div></div>
+    <div class="con">
+      <div class="fs">
+        <label class="lbl">Athletes in this session</label>
+        <div id="ath-checklist"></div>
+        <div id="results-hint" class="results-hint">Select athletes above to log individual results</div>
+      </div>
+      <div class="divider"></div>
+      <div class="fs"><label class="lbl">Date</label><input class="ifield" id="log-date" type="date"/></div>
+      <div class="fs">
+        <label class="lbl">Time of day</label>
+        <div class="timesel">
+          <button class="tmbtn sel" onclick="selTime(this,'Morning')">Morning</button>
+          <button class="tmbtn" onclick="selTime(this,'Afternoon')">Afternoon</button>
+          <button class="tmbtn" onclick="selTime(this,'Evening')">Evening</button>
+        </div>
+      </div>
+      <div class="fs">
+        <label class="lbl">Session type</label>
+        <div class="tsel">
+          <button class="tbtn sel" onclick="selType(this,'Training')">Training</button>
+          <button class="tbtn" onclick="selType(this,'Competition')">Competition</button>
+          <button class="tbtn" onclick="selType(this,'Recovery')">Recovery</button>
+          <button class="tbtn" onclick="selType(this,'S&C')">S&amp;C</button>
+        </div>
+      </div>
+      <div class="fs">
+        <label class="lbl">Completed session</label>
+        <textarea id="log-completed" rows="2" placeholder="e.g. 3×300m off 8 min recovery"></textarea>
+      </div>
+      <div id="ath-results-wrap"></div>
+      <div class="fs">
+        <label class="lbl">Session notes</label>
+        <textarea id="log-notes" rows="9" placeholder="Your full reflection — what worked, what didn't, technical observations, cues that landed, how athletes responded, anything worth remembering.&#10;&#10;This is your diary. Write as much as you need."></textarea>
+      </div>
+      <div class="fs">
+        <label class="lbl">Session quality</label>
+        <div class="qsel">
+          <button class="qsbtn" onclick="selQ(this,1)">1</button>
+          <button class="qsbtn" onclick="selQ(this,2)">2</button>
+          <button class="qsbtn s3" onclick="selQ(this,3)">3</button>
+          <button class="qsbtn" onclick="selQ(this,4)">4</button>
+          <button class="qsbtn" onclick="selQ(this,5)">5</button>
+        </div>
+        <div class="q-hint"><span>Poor</span><span>Average</span><span>Excellent</span></div>
+      </div>
+      <button class="sbtn" onclick="saveSession()">Save session</button>
+      <div style="height:24px"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const TAGCLS={Training:'t-tr',Competition:'t-co',Recovery:'t-re','S&C':'t-sc'};
+const COLS={Training:['Result','Dist / time','Recovery'],Competition:['Result','Dist / time','Recovery'],'S&C':['Weight','Sets / reps','Rest'],Recovery:['Result','Dist / time','Recovery']};
+const CPH={Training:'e.g. 3×300m off 8 min recovery',Competition:'e.g. 60m H final — 8.14',Recovery:'e.g. 30 min pool walk + full mobility','S&C':'e.g. Power clean 4×3, back squat 4×5'};
+
+function qDot(q){return q>=4?'#639922':q===3?'#EAB308':'#A32D2D';}
+function qClass(q){return q>=4?'q45':q===3?'q3':'q12';}
+
+function load(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
+function save(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+
+let athletes=load('trckng_athletes',[]);
+let sessions=load('trckng_sessions',[]);
+let calMonth=null;
+
+let logState={type:'Training',time:'Morning',quality:3,athletes:[],reps:{}};
+
+function nav(name,btn){
+  document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  go(name);
+}
+
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(name==='feed')renderFeed();
+  if(name==='calendar')renderCal();
+  if(name==='athletes')renderAthletes();
+  if(name==='log')initLog();
+}
+
+function renderFeed(){
+  const c=document.getElementById('feed-con');
+  if(!sessions.length){
+    c.innerHTML='<div class="empty"><strong>No sessions yet</strong>Tap + Session to log your first session.</div>';
+    return;
+  }
+  const grp={};
+  [...sessions].sort((a,b)=>b.date.localeCompare(a.date)).forEach(s=>{
+    const d=new Date(s.date+'T12:00:00');
+    const k=d.toLocaleString('en-GB',{month:'long',year:'numeric'});
+    if(!grp[k])grp[k]=[];
+    grp[k].push(s);
+  });
+  let html='';
+  Object.entries(grp).forEach(([mo,ss])=>{
+    html+=`<div class="mo-lbl">${mo}</div>`;
+    ss.forEach(s=>{
+      const aths=s.athletes.map(id=>athletes.find(a=>a.id===id)).filter(Boolean);
+      const chips=aths.map(a=>`<span class="ac">${a.name.split(' ')[0]}</span>`).join('');
+      const d=new Date(s.date+'T12:00:00');
+      const ds=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+      html+=`<div class="sc" id="sc-${s.id}">
+        <div class="sc-top">
+          <div class="sc-meta"><span class="sdt">${ds}</span><span class="spill">${s.time}</span></div>
+          <span class="ttag ${TAGCLS[s.type]||'t-tr'}">${s.type}</span>
+        </div>
+        ${s.completed?`<div class="completed-line">${s.completed}</div>`:''}
+        ${s.notes?`<div class="sn">${s.notes}</div>`:''}
+        <div class="sf">
+          <span class="qbadge ${qClass(s.quality)}">${s.quality}/5</span>
+          <div class="ach">${chips}</div>
+        </div>
+        <div class="sc-acts">
+          <button class="ebtn" onclick="editSession(${s.id})">Edit</button>
+          <button class="dbtn" onclick="confirmDel(${s.id})">Delete</button>
+        </div>
+        <div class="cdel" id="cdel-${s.id}">
+          <span>Delete this session?</span>
+          <button class="yes-del" onclick="doDelete(${s.id})">Yes, delete</button>
+          <button onclick="cancelDel(${s.id})">Cancel</button>
+        </div>
+      </div>`;
+    });
+  });
+  c.innerHTML=html;
+}
+
+function confirmDel(id){document.getElementById('cdel-'+id).classList.add('show');}
+function cancelDel(id){document.getElementById('cdel-'+id).classList.remove('show');}
+function doDelete(id){
+  sessions=sessions.filter(s=>s.id!==id);
+  save('trckng_sessions',sessions);
+  renderFeed();
+  showToast('Session deleted');
+}
+
+function editSession(id){
+  const s=sessions.find(x=>x.id===id);
+  if(!s)return;
+  logState={type:s.type,time:s.time,quality:s.quality,athletes:[...s.athletes],reps:JSON.parse(JSON.stringify(s.results||{})),editId:id};
+  go('log');
+  setTimeout(()=>{
+    document.getElementById('log-date').value=s.date;
+    document.getElementById('log-completed').value=s.completed||'';
+    document.getElementById('log-notes').value=s.notes||'';
+    document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('sel',b.textContent.trim()===s.type||b.getAttribute('onclick').includes("'"+s.type+"'")));
+    document.querySelectorAll('.tmbtn').forEach(b=>b.classList.toggle('sel',b.textContent.trim()===s.time));
+    document.querySelectorAll('.qsbtn').forEach(b=>{b.className='qsbtn';});
+    const qb=document.querySelectorAll('.qsbtn')[s.quality-1];
+    if(qb)qb.classList.add('s'+s.quality);
+    renderChecklist();
+    renderRepBlocks();
+    const h=document.querySelector('.htitle');
+    if(h)h.textContent='Edit session';
+  },50);
+}
+
+function renderCal(){
+  const c=document.getElementById('cal-con');
+  const now=new Date();
+  if(!calMonth)calMonth={year:now.getFullYear(),month:now.getMonth()};
+  const {year,month}=calMonth;
+  const moName=new Date(year,month,1).toLocaleString('en-GB',{month:'long',year:'numeric'});
+  const firstDay=(new Date(year,month,1).getDay()+6)%7;
+  const dim=new Date(year,month+1,0).getDate();
+  const today=new Date();
+  const isCurrentMonth=today.getFullYear()===year&&today.getMonth()===month;
+  const todayDate=today.getDate();
+
+  const dayS={};
+  sessions.forEach(s=>{
+    const d=new Date(s.date+'T12:00:00');
+    if(d.getFullYear()===year&&d.getMonth()===month){
+      const day=d.getDate();
+      if(!dayS[day])dayS[day]=[];
+      dayS[day].push(s);
+    }
+  });
+
+  let g45=0,g3=0,g12=0,tot=0;
+  sessions.forEach(s=>{
+    const d=new Date(s.date+'T12:00:00');
+    if(d.getFullYear()===year&&d.getMonth()===month){
+      tot++;
+      if(s.quality>=4)g45++;
+      else if(s.quality===3)g3++;
+      else g12++;
+    }
+  });
+  const mx=Math.max(g45,g3,g12,1);
+  const h45=Math.round((g45/mx)*52);
+  const h3=Math.round((g3/mx)*52);
+  const h12=Math.round((g12/mx)*52);
+
+  let html=`<div class="cal-hdr">
+    <button class="cal-nav" onclick="prevMonth()">&#8249;</button>
+    <span class="cal-mo">${moName}</span>
+    <button class="cal-nav" onclick="nextMonth()">&#8250;</button>
+  </div>`;
+  html+=`<div class="cal-grid">`;
+  ['M','T','W','T','F','S','S'].forEach(d=>html+=`<div class="cal-dl">${d}</div>`);
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-day"></div>`;
+  for(let d=1;d<=dim;d++){
+    const ss=dayS[d]||[];
+    const isToday=isCurrentMonth&&d===todayDate;
+    let inner=`${d}`;
+    if(ss.length===1){
+      inner+=`<div class="cdot" style="background:${qDot(ss[0].quality)}"></div>`;
+    } else if(ss.length>1){
+      inner+=`<div class="cbadge">${ss.length}</div>`;
+    }
+    html+=`<div class="cal-day${ss.length?' hs':''}${isToday?' td':''}">${inner}</div>`;
+  }
+  html+=`</div>`;
+
+  if(tot>0){
+    html+=`<div class="tcard">
+      <div class="tcard-title">${moName} — ${tot} session${tot!==1?'s':''} logged</div>
+      <div class="tbars">
+        <div class="tbc"><div class="tbv">${g45}</div><div class="tbf" style="height:${h45}px;background:#639922;"></div><div class="tbl">4–5</div></div>
+        <div class="tbc"><div class="tbv">${g3}</div><div class="tbf" style="height:${h3}px;background:#EAB308;"></div><div class="tbl">3</div></div>
+        <div class="tbc"><div class="tbv">${g12}</div><div class="tbf" style="height:${h12}px;background:#A32D2D;"></div><div class="tbl">1–2</div></div>
+      </div>
+      <div class="tbar-base"></div>
+    </div>`;
+  } else {
+    html+=`<div class="tcard"><div class="tcard-title" style="text-align:center;padding:16px 0;">No sessions logged this month</div></div>`;
+  }
+
+  html+=`<div class="leg">
+    <div class="li"><div class="ld" style="background:#639922"></div>4–5 Excellent</div>
+    <div class="li"><div class="ld" style="background:#EAB308"></div>3 Average</div>
+    <div class="li"><div class="ld" style="background:#A32D2D"></div>1–2 Poor</div>
+    <div class="li"><div class="ld" style="background:#B5D4F4"></div>Multi-session</div>
+  </div>`;
+  c.innerHTML=html;
+}
+
+function prevMonth(){
+  if(!calMonth){const n=new Date();calMonth={year:n.getFullYear(),month:n.getMonth()};}
+  calMonth.month--;
+  if(calMonth.month<0){calMonth.month=11;calMonth.year--;}
+  renderCal();
+}
+function nextMonth(){
+  if(!calMonth){const n=new Date();calMonth={year:n.getFullYear(),month:n.getMonth()};}
+  calMonth.month++;
+  if(calMonth.month>11){calMonth.month=0;calMonth.year++;}
+  renderCal();
+}
+
+function renderAthletes(){
+  const c=document.getElementById('ath-con');
+  if(!athletes.length){
+    c.innerHTML='<div class="empty"><strong>No athletes yet</strong>Tap + Athlete to add your squad.</div><button class="add-ab" onclick="go(\'add-athlete\')">+ Add athlete</button>';
+    return;
+  }
+  let html=athletes.map(a=>{
+    const last=sessions.filter(s=>s.athletes&&s.athletes.includes(a.id));
+    last.sort((x,y)=>y.date.localeCompare(x.date));
+    const ls=last.length?new Date(last[0].date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'Never';
+    const age=a.dob?Math.floor((new Date()-new Date(a.dob))/(365.25*24*3600*1000)):'';
+    return `<div class="ar">
+      <div class="av">${a.initials}</div>
+      <div class="ai"><div class="an">${a.name}</div><div class="as2">${[a.sport,a.event,age?age+'y':''].filter(Boolean).join(' · ')}</div></div>
+      <div class="al">${ls}</div>
+    </div>`;
+  }).join('');
+  html+=`<button class="add-ab" onclick="go('add-athlete')">+ Add athlete</button>`;
+  c.innerHTML=html;
+}
+
+function initLog(){
+  const t=new Date();
+  if(!logState.editId){
+    document.getElementById('log-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+    document.getElementById('log-completed').value='';
+    document.getElementById('log-notes').value='';
+    document.getElementById('log-completed').placeholder=CPH['Training'];
+    logState={type:'Training',time:'Morning',quality:3,athletes:[],reps:{}};
+    document.querySelectorAll('.tbtn').forEach((b,i)=>b.classList.toggle('sel',i===0));
+    document.querySelectorAll('.tmbtn').forEach((b,i)=>b.classList.toggle('sel',i===0));
+    document.querySelectorAll('.qsbtn').forEach((b,i)=>{b.className='qsbtn';if(i===2)b.classList.add('s3');});
+    const h=document.querySelector('.htitle');
+    if(h)h.textContent='Log session';
+  }
+  renderChecklist();
+  renderRepBlocks();
+}
+
+function renderChecklist(){
+  const c=document.getElementById('ath-checklist');
+  if(!athletes.length){
+    c.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0;">No athletes added yet — go to Athletes tab first.</div>';
+    return;
+  }
+  c.innerHTML=athletes.map(a=>`
+    <div class="chk-row" onclick="toggleAth(${a.id})">
+      <div class="chk-c${logState.athletes.includes(a.id)?' on':''}">${logState.athletes.includes(a.id)?'✓':''}</div>
+      <div><div class="chk-n">${a.name}</div><div class="chk-e">${a.event}</div></div>
+    </div>`).join('');
+  const hint=document.getElementById('results-hint');
+  if(hint)hint.style.display=logState.athletes.length?'none':'block';
+}
+
+function toggleAth(id){
+  if(logState.athletes.includes(id)){
+    logState.athletes=logState.athletes.filter(x=>x!==id);
+    delete logState.reps[id];
+  } else {
+    logState.athletes.push(id);
+    if(!logState.reps[id])logState.reps[id]=[{a:'',b:'',c:''}];
+  }
+  renderChecklist();
+  renderRepBlocks();
+}
+
+function renderRepBlocks(){
+  const w=document.getElementById('ath-results-wrap');
+  if(!logState.athletes.length){w.innerHTML='';return;}
+  const cols=COLS[logState.type]||COLS['Training'];
+  let html=`<div class="fs"><label class="lbl">Individual results</label>`;
+  logState.athletes.forEach(id=>{
+    const a=athletes.find(x=>x.id===id);
+    if(!a)return;
+    const reps=logState.reps[id]||[];
+    html+=`<div class="arb"><div class="arb-name">${a.name}</div>`;
+    html+=`<div class="rep-hdr"><span></span><span>${cols[0]}</span><span>${cols[1]}</span><span>${cols[2]}</span><span></span></div>`;
+    reps.forEach((rep,i)=>{
+      html+=`<div class="rep-row">
+        <div class="rep-n">${i+1}</div>
+        <input class="ri" type="text" placeholder="—" value="${rep.a||''}" oninput="ur(${id},${i},'a',this.value)"/>
+        <input class="ri" type="text" placeholder="—" value="${rep.b||''}" oninput="ur(${id},${i},'b',this.value)"/>
+        <input class="ri" type="text" placeholder="—" value="${rep.c||''}" oninput="ur(${id},${i},'c',this.value)"/>
+        <button class="del-rep" onclick="delRep(${id},${i})">×</button>
+      </div>`;
+    });
+    html+=`<button class="add-rep" onclick="addRep(${id})">+ Add rep</button></div>`;
+  });
+  html+=`</div>`;
+  w.innerHTML=html;
+}
+
+function ur(id,i,f,v){if(logState.reps[id]&&logState.reps[id][i])logState.reps[id][i][f]=v;}
+function addRep(id){if(!logState.reps[id])logState.reps[id]=[];logState.reps[id].push({a:'',b:'',c:''});renderRepBlocks();}
+function delRep(id,i){
+  if(logState.reps[id]&&logState.reps[id].length>1){logState.reps[id].splice(i,1);renderRepBlocks();}
+  else showToast('Need at least one row');
+}
+
+function selType(btn,val){
+  logState.type=val;
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const ph=document.getElementById('log-completed');
+  if(ph)ph.placeholder=CPH[val]||CPH['Training'];
+  renderRepBlocks();
+}
+function selTime(btn,val){
+  logState.time=val;
+  document.querySelectorAll('.tmbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+function selQ(btn,n){
+  logState.quality=n;
+  document.querySelectorAll('.qsbtn').forEach(b=>{b.className='qsbtn';});
+  btn.classList.add('s'+n);
+}
+
+function saveSession(){
+  const date=document.getElementById('log-date').value;
+  if(!date){showToast('Pick a date first');return;}
+  const session={
+    id:logState.editId||Date.now(),
+    date,
+    time:logState.time,
+    type:logState.type,
+    completed:document.getElementById('log-completed').value.trim(),
+    notes:document.getElementById('log-notes').value.trim(),
+    athletes:[...logState.athletes],
+    results:JSON.parse(JSON.stringify(logState.reps)),
+    quality:logState.quality,
+    savedAt:new Date().toISOString()
+  };
+  if(logState.editId){
+    const idx=sessions.findIndex(s=>s.id===logState.editId);
+    if(idx>-1)sessions[idx]=session;
+    else sessions.unshift(session);
+  } else {
+    sessions.unshift(session);
+  }
+  save('trckng_sessions',sessions);
+  logState={type:'Training',time:'Morning',quality:3,athletes:[],reps:{}};
+  showToast(logState.editId?'Session updated':'Session saved');
+  setTimeout(()=>{nav('feed',document.getElementById('nav-feed'));},700);
+}
+
+function addAthlete(){
+  const name=document.getElementById('na-name').value.trim();
+  if(!name){showToast('Add a name first');return;}
+  const sport=document.getElementById('na-sport').value.trim();
+  const event=document.getElementById('na-event').value.trim();
+  const dob=document.getElementById('na-dob').value;
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const a={id:Date.now(),name,sport:sport||'',event:event||'',dob,initials};
+  athletes.push(a);
+  save('trckng_athletes',athletes);
+  ['na-name','na-sport','na-event','na-dob'].forEach(i=>document.getElementById(i).value='');
+  showToast(name+' added');
+  setTimeout(()=>go('athletes'),600);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+renderFeed();
+</script>
+</body>
+</html>
