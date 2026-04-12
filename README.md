@@ -1,1 +1,2 @@
 # trckng
+trckng is a coaching diary built for Olympic sport coaches who are tired of leaving their notebook at home. Log sessions, track individual athlete results, monitor session quality over time, and keep a running diary of what actually happened on the track — not just the numbers. Built first for 400m hurdles coaching, it works across any event or discipline. This is a V1 beta — simple by design, used daily by the coach who built it.
