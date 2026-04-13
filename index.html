@@ -20,8 +20,7 @@
   --yellow:#854F0B;--yellowbg:#FEFCE8;--yellowborder:#FDE047;
   --red:#791F1F;--redbg:#FCEBEB;--redborder:#F09595;
   --blue:#0C447C;--bluebg:#E6F1FB;
-  --grey:#444441;--greybg:#F1EFE8;--greyborder:#B4B2A9;
-  --purple:#3C3489;--purplebg:#EEEDFE;
+  --grey:#5F5E5A;--greybg:#F1EFE8;--greyborder:#B4B2A9;
   --radius:8px;--radius-lg:12px;
 }
 html,body{height:100%;overflow:hidden;background:var(--bg3);}
@@ -31,8 +30,11 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;}
 .screen.active{display:flex;}
 .hdr{padding:14px 18px 12px;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .wm{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;letter-spacing:-0.5px;color:var(--text);}
+.hdr-btns{display:flex;gap:8px;}
 .hbtn{font-size:13px;color:var(--text2);cursor:pointer;padding:7px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:none;font-family:'DM Sans',sans-serif;}
 .hbtn:active{background:var(--bg2);}
+.hbtn-primary{background:var(--text);color:#fff;border-color:var(--text);}
+.hbtn-primary:active{opacity:0.85;}
 .bbtn{font-size:14px;color:var(--text2);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
 .htitle{font-size:14px;font-weight:500;color:var(--text);}
 .nav{display:flex;background:var(--bg);border-top:0.5px solid var(--border);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);}
@@ -44,16 +46,14 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;}
 .fs{margin-bottom:20px;}
 .mo-lbl{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:9px;padding:0 2px;}
 
-/* SESSION CARDS */
+/* CARDS */
 .sc{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:9px;cursor:pointer;}
 .sc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
 .sc-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .sdt{font-size:12px;color:var(--text2);}
-.spill{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--text2);}
 .ttag{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
 .t-tr{background:#E6F1FB;color:#0C447C;}
 .t-co{background:#FAECE7;color:#712B13;}
-.t-re{background:#EAF3DE;color:#27500A;}
 .t-sc{background:#EEEDFE;color:#3C3489;}
 .t-rd{background:var(--greybg);color:var(--grey);}
 .completed-line{font-size:12px;font-weight:500;color:var(--text);font-family:'DM Mono',monospace;margin-bottom:5px;line-height:1.4;}
@@ -67,19 +67,18 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;}
 .q3{background:var(--yellowbg);color:var(--yellow);border:0.5px solid var(--yellowborder);}
 .q12{background:var(--redbg);color:var(--red);}
 .qrd{background:var(--greybg);color:var(--grey);}
+.qsk{background:var(--bg2);color:var(--text3);}
 .ach{display:flex;gap:4px;flex-wrap:wrap;}
 .ac{font-size:11px;padding:2px 7px;background:var(--bg2);border-radius:20px;color:var(--text2);}
 .expand-hint{font-size:11px;color:var(--text3);margin-left:auto;}
 .sc-detail{display:none;margin-top:12px;border-top:0.5px solid var(--border);padding-top:12px;}
 .sc.expanded .sc-detail{display:block;}
-.detail-results{margin-bottom:12px;}
 .dr-ath{font-size:12px;font-weight:500;color:var(--text);margin-bottom:5px;margin-top:10px;}
 .dr-ath:first-child{margin-top:0;}
 .dr-table{width:100%;border-collapse:collapse;font-size:12px;font-family:'DM Mono',monospace;}
 .dr-table th{font-size:10px;color:var(--text3);font-weight:500;text-align:left;padding:3px 6px 3px 0;letter-spacing:0.04em;text-transform:uppercase;font-family:'DM Sans',sans-serif;}
 .dr-table td{padding:4px 6px 4px 0;color:var(--text2);border-bottom:0.5px solid var(--border);}
 .dr-table tr:last-child td{border-bottom:none;}
-.readiness-badge{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--bluebg);color:var(--blue);}
 .sc-acts{display:flex;gap:4px;margin-top:12px;border-top:0.5px solid var(--border);padding-top:9px;}
 .ebtn{font-size:12px;color:var(--text2);background:none;border:none;cursor:pointer;padding:5px 9px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;}
 .ebtn:active{background:var(--bg2);}
@@ -92,22 +91,20 @@ body{font-family:'DM Sans',sans-serif;color:var(--text);font-size:15px;}
 .cdel .yes-del{background:var(--redbg);color:var(--red);border-color:var(--redborder);}
 
 /* FORM */
-.tsel{display:flex;gap:6px;flex-wrap:wrap;}
-.tbtn{flex:1;min-width:60px;padding:10px 6px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);text-align:center;}
+.tsel{display:flex;gap:6px;}
+.tbtn{flex:1;padding:10px 6px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);text-align:center;}
 .tbtn.sel{border-color:var(--border2);color:var(--text);background:var(--bg2);font-weight:500;}
 .tbtn.rest-btn.sel{background:var(--greybg);color:var(--grey);border-color:var(--greyborder);}
-.timesel{display:flex;gap:6px;}
-.tmbtn{flex:1;padding:10px 6px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);text-align:center;}
-.tmbtn.sel{border-color:var(--border2);color:var(--text);background:var(--bg2);font-weight:500;}
 .qsel{display:flex;gap:5px;}
 .qsbtn{flex:1;padding:13px 4px;border-radius:var(--radius);border:0.5px solid var(--border);background:var(--bg);font-size:17px;font-weight:500;cursor:pointer;font-family:'DM Mono',monospace;color:var(--text2);text-align:center;}
 .qsbtn.s1,.qsbtn.s2{background:var(--redbg);color:var(--red);border-color:var(--redborder);}
 .qsbtn.s3{background:var(--yellowbg);color:var(--yellow);border-color:var(--yellowborder);}
 .qsbtn.s4,.qsbtn.s5{background:var(--greenbg);color:var(--green);border-color:var(--greenborder);}
+.qsbtn.skip{background:var(--bg2);color:var(--text3);border-color:var(--border);font-size:12px;font-family:'DM Sans',sans-serif;}
 .q-hint{display:grid;grid-template-columns:2fr 1fr 2fr;font-size:11px;color:var(--text3);margin-top:6px;}
 .q-hint span:last-child{text-align:right;}
 .q-hint span:nth-child(2){text-align:center;}
-textarea{width:100%;padding:13px 14px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);resize:none;line-height:1.7;-webkit-appearance:none;min-height:60px;}
+textarea{width:100%;padding:13px 14px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);resize:none;line-height:1.7;-webkit-appearance:none;overflow:hidden;min-height:52px;}
 textarea:focus{outline:none;border-color:var(--border2);}
 textarea::placeholder{color:var(--text3);}
 .ifield{width:100%;padding:11px 13px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:9px;-webkit-appearance:none;}
@@ -121,7 +118,6 @@ textarea::placeholder{color:var(--text3);}
 .chk-c.on{background:var(--text);border-color:var(--text);color:#fff;}
 .chk-n{font-size:14px;color:var(--text);}
 .chk-e{font-size:12px;color:var(--text2);}
-.results-hint{font-size:12px;color:var(--text3);padding:10px 0 4px;font-style:italic;}
 .arb{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:9px;}
 .arb-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:11px;}
 .rep-hdr{display:grid;grid-template-columns:22px 1fr 1fr 1fr 24px;gap:5px;margin-bottom:5px;}
@@ -135,7 +131,12 @@ textarea::placeholder{color:var(--text3);}
 .add-rep:active{background:var(--bg2);}
 .del-rep{font-size:15px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0 2px;font-family:'DM Sans',sans-serif;line-height:1;text-align:center;}
 .divider{height:0.5px;background:var(--border);margin:4px 0 20px;}
-.hidden-section{display:none;}
+.draft-banner{background:var(--yellowbg);border:0.5px solid var(--yellowborder);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--yellow);display:flex;align-items:center;justify-content:space-between;}
+.draft-clear{font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;}
+
+/* QUICK LOG */
+.ql-wrap{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px;}
+.ql-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px;}
 
 /* ATHLETES */
 .av{width:36px;height:36px;border-radius:50%;background:var(--bluebg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--blue);flex-shrink:0;}
@@ -144,18 +145,13 @@ textarea::placeholder{color:var(--text3);}
 .ai{flex:1;}
 .an{font-size:14px;font-weight:500;color:var(--text);}
 .as2{font-size:12px;color:var(--text2);margin-top:2px;}
-.al{font-size:12px;color:var(--text3);text-align:right;}
-.add-ab{width:100%;padding:13px;border:0.5px dashed var(--border2);border-radius:var(--radius-lg);background:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;}
-.add-ab:active{background:var(--bg2);}
-.ath-acts{display:flex;gap:8px;margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px;}
+.al{font-size:12px;color:var(--text3);}
+.ath-stat{font-size:12px;color:var(--text3);margin-top:3px;}
+.ath-acts{display:none;gap:8px;margin-top:10px;border-top:0.5px solid var(--border);padding-top:10px;}
 .ath-ebtn{font-size:12px;color:var(--text2);background:none;border:none;cursor:pointer;padding:5px 9px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;}
 .ath-dbtn{font-size:12px;color:var(--red);background:none;border:none;cursor:pointer;padding:5px 9px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;}
-.ath-expanded .ath-acts{display:flex;}
-.ath-stat{font-size:12px;color:var(--text2);margin-top:6px;}
-
-/* TOAST */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:13px;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;z-index:999;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.add-ab{width:100%;padding:13px;border:0.5px dashed var(--border2);border-radius:var(--radius-lg);background:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:4px;}
+.add-ab:active{background:var(--bg2);}
 
 /* CALENDAR */
 .cal-hdr{display:flex;align-items:center;justify-content:space-between;padding:4px 0 15px;}
@@ -168,13 +164,12 @@ textarea::placeholder{color:var(--text3);}
 .cal-day.td{background:var(--bg2);}
 .cdot{width:5px;height:5px;border-radius:50%;margin-top:1px;}
 .cbadge{position:absolute;top:0;right:0;width:14px;height:14px;border-radius:50%;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:500;font-family:'DM Mono',monospace;background:var(--bluebg);color:var(--blue);}
-
-/* TALLY CHART */
 .tcard{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-top:18px;}
-.tcard-title{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.tcard-title{font-size:12px;color:var(--text2);margin-bottom:4px;}
+.tcard-sub{font-size:11px;color:var(--text3);margin-bottom:16px;}
 .tally-wrap{display:flex;gap:0;align-items:flex-end;height:80px;border-bottom:0.5px solid var(--border);padding:0 4px;margin-bottom:8px;}
 .tbc{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;flex:1;height:100%;}
-.tbf{width:60%;border-radius:3px 3px 0 0;min-height:3px;transition:height 0.3s;}
+.tbf{width:60%;border-radius:3px 3px 0 0;min-height:3px;}
 .tbl{font-size:11px;color:var(--text3);margin-top:4px;}
 .tbv{font-size:14px;font-weight:500;color:var(--text);}
 .leg{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;}
@@ -182,10 +177,9 @@ textarea::placeholder{color:var(--text3);}
 .ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .empty{text-align:center;padding:60px 24px;color:var(--text2);font-size:14px;line-height:1.8;}
 .empty strong{display:block;font-size:16px;color:var(--text);margin-bottom:8px;font-weight:500;}
-
-/* EXPORT */
-.export-btn{width:100%;padding:12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:12px;text-align:center;}
-.export-btn:active{background:var(--bg2);}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:13px;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.session-count{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;}
 </style>
 </head>
 <body>
@@ -193,12 +187,56 @@ textarea::placeholder{color:var(--text3);}
 
   <!-- FEED -->
   <div class="screen active" id="screen-feed">
-    <div class="hdr"><span class="wm">trckng</span><button class="hbtn" onclick="go('log')">+ Session</button></div>
+    <div class="hdr">
+      <span class="wm">trckng</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="session-count" id="session-count"></span>
+        <div class="hdr-btns">
+          <button class="hbtn" onclick="go('quicklog')">Quick log</button>
+          <button class="hbtn hbtn-primary" onclick="go('log')">+ Session</button>
+        </div>
+      </div>
+    </div>
     <div class="con" id="feed-con"></div>
     <div class="nav">
       <button class="ni active" id="nav-feed" onclick="nav('feed',this)"><span class="ni-ic">≡</span>Log</button>
       <button class="ni" id="nav-cal" onclick="nav('calendar',this)"><span class="ni-ic">▦</span>Calendar</button>
       <button class="ni" id="nav-ath" onclick="nav('athletes',this)"><span class="ni-ic">◉</span>Athletes</button>
+    </div>
+  </div>
+
+  <!-- QUICK LOG -->
+  <div class="screen" id="screen-quicklog">
+    <div class="hdr"><button class="bbtn" onclick="go('feed')">← Back</button><span class="htitle">Quick log</span><div style="width:80px"></div></div>
+    <div class="con">
+      <div class="fs">
+        <label class="lbl">Athletes</label>
+        <div id="ql-checklist"></div>
+      </div>
+      <div class="fs"><label class="lbl">Date</label><input class="ifield" id="ql-date" type="date"/></div>
+      <div class="fs">
+        <label class="lbl">Session type</label>
+        <div class="tsel" id="ql-type-sel">
+          <button class="tbtn sel" onclick="qlSelType(this,'Training')">Training</button>
+          <button class="tbtn" onclick="qlSelType(this,'Competition')">Competition</button>
+          <button class="tbtn" onclick="qlSelType(this,'S&C')">S&amp;C</button>
+          <button class="tbtn rest-btn" onclick="qlSelType(this,'Rest')">Rest</button>
+        </div>
+      </div>
+      <div class="fs" id="ql-quality-wrap">
+        <label class="lbl">Session quality</label>
+        <div class="qsel" id="ql-qsel">
+          <button class="qsbtn" onclick="qlSelQ(this,1)">1</button>
+          <button class="qsbtn" onclick="qlSelQ(this,2)">2</button>
+          <button class="qsbtn" onclick="qlSelQ(this,3)">3</button>
+          <button class="qsbtn" onclick="qlSelQ(this,4)">4</button>
+          <button class="qsbtn" onclick="qlSelQ(this,5)">5</button>
+          <button class="qsbtn skip" onclick="qlSelQ(this,null)">Skip</button>
+        </div>
+        <div class="q-hint"><span>Poor</span><span>Average</span><span>Excellent</span></div>
+      </div>
+      <button class="sbtn" onclick="saveQuickLog()">Save</button>
+      <div style="height:24px"></div>
     </div>
   </div>
 
@@ -236,79 +274,52 @@ textarea::placeholder{color:var(--text3);}
     </div>
   </div>
 
-  <!-- LOG / EDIT SESSION -->
+  <!-- LOG SESSION -->
   <div class="screen" id="screen-log">
     <div class="hdr"><button class="bbtn" onclick="go('feed')">← Back</button><span class="htitle" id="log-title">Log session</span><div style="width:80px"></div></div>
     <div class="con" id="log-con">
-
+      <div id="draft-banner" class="draft-banner" style="display:none;">
+        Draft restored <button class="draft-clear" onclick="clearDraft()">Clear</button>
+      </div>
       <div class="fs">
         <label class="lbl">Athletes in this session</label>
         <div id="ath-checklist"></div>
-        <div id="results-hint" class="results-hint">Select athletes above to log individual results</div>
+        <div id="results-hint" style="font-size:12px;color:var(--text3);padding:10px 0 4px;font-style:italic;display:none;">Select athletes above to log individual results</div>
       </div>
-
       <div class="divider"></div>
-
-      <div class="fs"><label class="lbl">Date</label><input class="ifield" id="log-date" type="date"/></div>
-
-      <div class="fs">
-        <label class="lbl">Time of day</label>
-        <div class="timesel">
-          <button class="tmbtn sel" onclick="selTime(this,'Morning')">Morning</button>
-          <button class="tmbtn" onclick="selTime(this,'Afternoon')">Afternoon</button>
-          <button class="tmbtn" onclick="selTime(this,'Evening')">Evening</button>
-        </div>
-      </div>
-
+      <div class="fs"><label class="lbl">Date</label><input class="ifield" id="log-date" type="date" oninput="saveDraft()"/></div>
       <div class="fs">
         <label class="lbl">Session type</label>
-        <div class="tsel">
+        <div class="tsel" id="log-type-sel">
           <button class="tbtn sel" onclick="selType(this,'Training')">Training</button>
           <button class="tbtn" onclick="selType(this,'Competition')">Competition</button>
-          <button class="tbtn" onclick="selType(this,'Recovery')">Recovery</button>
           <button class="tbtn" onclick="selType(this,'S&C')">S&amp;C</button>
-          <button class="tbtn rest-btn" onclick="selType(this,'Rest')">Rest day</button>
+          <button class="tbtn rest-btn" onclick="selType(this,'Rest')">Rest</button>
         </div>
       </div>
-
       <div id="session-detail-fields">
         <div class="fs">
-          <label class="lbl">How are the athletes today? <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text3)">— ask before starting</span></label>
-          <div class="qsel" id="readiness-sel">
-            <button class="qsbtn" onclick="selReadiness(this,1)">1</button>
-            <button class="qsbtn" onclick="selReadiness(this,2)">2</button>
-            <button class="qsbtn s3" onclick="selReadiness(this,3)">3</button>
-            <button class="qsbtn" onclick="selReadiness(this,4)">4</button>
-            <button class="qsbtn" onclick="selReadiness(this,5)">5</button>
-          </div>
-          <div class="q-hint"><span>Poor</span><span>Average</span><span>Good</span></div>
-        </div>
-
-        <div class="fs">
           <label class="lbl">Completed session</label>
-          <textarea id="log-completed" rows="2" placeholder="e.g. 3×300m off 8 min recovery"></textarea>
+          <textarea id="log-completed" rows="2" placeholder="e.g. 3×300m off 8 min recovery" oninput="autoResize(this);saveDraft()"></textarea>
         </div>
-
         <div id="ath-results-wrap"></div>
-
         <div class="fs">
           <label class="lbl">Session notes</label>
-          <textarea id="log-notes" rows="9" placeholder="Your full reflection — what worked, what didn't, technical observations, cues that landed, how athletes responded, anything worth remembering.&#10;&#10;This is your diary. Write as much as you need."></textarea>
+          <textarea id="log-notes" rows="9" placeholder="Your full reflection — what worked, what didn't, technical observations, cues that landed, how athletes responded, anything worth remembering.&#10;&#10;This is your diary. Write as much as you need." oninput="autoResize(this);saveDraft()"></textarea>
         </div>
-
         <div class="fs">
           <label class="lbl">Session quality</label>
           <div class="qsel" id="quality-sel">
             <button class="qsbtn" onclick="selQ(this,1)">1</button>
             <button class="qsbtn" onclick="selQ(this,2)">2</button>
-            <button class="qsbtn s3" onclick="selQ(this,3)">3</button>
+            <button class="qsbtn" onclick="selQ(this,3)">3</button>
             <button class="qsbtn" onclick="selQ(this,4)">4</button>
             <button class="qsbtn" onclick="selQ(this,5)">5</button>
+            <button class="qsbtn skip" onclick="selQ(this,null)">Skip</button>
           </div>
           <div class="q-hint"><span>Poor</span><span>Average</span><span>Excellent</span></div>
         </div>
       </div>
-
       <button class="sbtn" id="save-session-btn" onclick="saveSession()">Save session</button>
       <div style="height:24px"></div>
     </div>
@@ -318,22 +329,23 @@ textarea::placeholder{color:var(--text3);}
 </div>
 
 <script>
-const TAGCLS={Training:'t-tr',Competition:'t-co',Recovery:'t-re','S&C':'t-sc',Rest:'t-rd'};
-const COLS={Training:['Result','Dist / time','Recovery'],Competition:['Result','Dist / time','Recovery'],'S&C':['Weight','Sets / reps','Rest'],Recovery:['Result','Dist / time','Recovery']};
-const CPH={Training:'e.g. 3×300m off 8 min recovery',Competition:'e.g. 60m H final — 8.14',Recovery:'e.g. 30 min pool walk + full mobility','S&C':'e.g. Power clean 4×3, back squat 4×5'};
+const TAGCLS={Training:'t-tr',Competition:'t-co','S&C':'t-sc',Rest:'t-rd'};
+const COLS={Training:['Result','Dist / time','Recovery'],Competition:['Result','Dist / time','Recovery'],'S&C':['Weight','Sets / reps','Rest']};
+const CPH={Training:'e.g. 3×300m off 8 min recovery',Competition:'e.g. 60m H final — 8.14','S&C':'e.g. Power clean 4×3, back squat 4×5',Rest:''};
 
-function qDot(q){return q>=4?'#639922':q===3?'#EAB308':'#A32D2D';}
-function qClass(q){return q>=4?'q45':q===3?'q3':'q12';}
+function qDot(q){return q===null||q===undefined?'#B4B2A9':q>=4?'#639922':q===3?'#EAB308':'#A32D2D';}
+function qClass(q){return q===null||q===undefined?'qsk':q>=4?'q45':q===3?'q3':'q12';}
+function qLabel(q){return q===null||q===undefined?'—':q+'/5';}
 
-function load(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
-function save(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+function ld(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
+function sv(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
 
-let athletes=load('trckng_athletes',[]);
-let sessions=load('trckng_sessions',[]);
+let athletes=ld('trckng_athletes',[]);
+let sessions=ld('trckng_sessions',[]);
 let calMonth=null;
 let editingAthleteId=null;
-
-let logState={type:'Training',time:'Morning',quality:3,readiness:3,athletes:[],reps:{},editId:null};
+let logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
+let qlState={type:'Training',quality:null,athletes:[]};
 
 function nav(name,btn){
   document.querySelectorAll('.ni').forEach(b=>b.classList.remove('active'));
@@ -348,14 +360,52 @@ function go(name){
   if(name==='calendar')renderCal();
   if(name==='athletes')renderAthletes();
   if(name==='log')initLog();
+  if(name==='quicklog')initQuickLog();
   if(name==='add-athlete')initAthleteForm();
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=el.scrollHeight+'px';
+}
+
+/* ---- DRAFT ---- */
+function saveDraft(){
+  const draft={
+    date:document.getElementById('log-date').value,
+    completed:document.getElementById('log-completed').value,
+    notes:document.getElementById('log-notes').value,
+    type:logState.type,
+    quality:logState.quality,
+    athletes:logState.athletes,
+    reps:logState.reps,
+    editId:logState.editId,
+    savedAt:new Date().toISOString()
+  };
+  sv('trckng_draft',draft);
+}
+
+function clearDraft(){
+  localStorage.removeItem('trckng_draft');
+  document.getElementById('draft-banner').style.display='none';
+}
+
+function loadDraft(){
+  const d=ld('trckng_draft',null);
+  if(!d||d.editId)return null;
+  const age=(new Date()-new Date(d.savedAt))/1000/60/60;
+  if(age>24){localStorage.removeItem('trckng_draft');return null;}
+  return d;
 }
 
 /* ---- FEED ---- */
 function renderFeed(){
   const c=document.getElementById('feed-con');
+  const sc=document.getElementById('session-count');
+  if(sc)sc.textContent=sessions.length?sessions.length+' sessions':'';
+
   if(!sessions.length){
-    c.innerHTML='<div class="empty"><strong>No sessions yet</strong>Tap + Session to log your first session.</div>';
+    c.innerHTML='<div class="empty"><strong>No sessions yet</strong>Tap + Session or Quick log to get started.</div>';
     return;
   }
   const sorted=[...sessions].sort((a,b)=>b.date.localeCompare(a.date)||((b.savedAt||'').localeCompare(a.savedAt||'')));
@@ -370,7 +420,7 @@ function renderFeed(){
   Object.entries(grp).forEach(([mo,ss])=>{
     html+=`<div class="mo-lbl">${mo}</div>`;
     ss.forEach(s=>{
-      const aths=s.athletes?s.athletes.map(id=>athletes.find(a=>a.id===id)).filter(Boolean):[];
+      const aths=(s.athletes||[]).map(id=>athletes.find(a=>a.id===id)).filter(Boolean);
       const chips=aths.map(a=>`<span class="ac">${a.name.split(' ')[0]}</span>`).join('');
       const d=new Date(s.date+'T12:00:00');
       const ds=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
@@ -380,9 +430,9 @@ function renderFeed(){
       if(!isRest){
         const hasResults=s.results&&Object.keys(s.results).length>0&&aths.length>0;
         if(hasResults){
-          detailHtml+='<div class="detail-results">';
+          detailHtml+='<div style="margin-bottom:12px;">';
           aths.forEach(a=>{
-            const reps=(s.results[a.id]||[]).filter(r=>r.a||r.b||r.c);
+            const reps=((s.results||{})[a.id]||[]).filter(r=>r.a||r.b||r.c);
             if(!reps.length)return;
             const cols=COLS[s.type]||COLS['Training'];
             detailHtml+=`<div class="dr-ath">${a.name}</div>
@@ -393,40 +443,41 @@ function renderFeed(){
           });
           detailHtml+='</div>';
         }
-        if(s.readiness){
-          detailHtml+=`<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;"><span style="font-size:12px;color:var(--text3);">Athlete readiness</span><span class="readiness-badge">${s.readiness}/5</span></div>`;
-        }
       }
 
-      html+=`<div class="sc" id="sc-${s.id}" onclick="toggleCard(${s.id})">
+      const showExpand=!isRest&&(s.notes||detailHtml);
+      html+=`<div class="sc" id="sc-${s.id}" onclick="${showExpand?'toggleCard('+s.id+')':''}">
         <div class="sc-top">
-          <div class="sc-meta"><span class="sdt">${ds}</span>${!isRest?`<span class="spill">${s.time}</span>`:''}</div>
+          <div class="sc-meta"><span class="sdt">${ds}</span></div>
           <span class="ttag ${TAGCLS[s.type]||'t-tr'}">${s.type}</span>
         </div>
         ${s.completed&&!isRest?`<div class="completed-line">${s.completed}</div>`:''}
         ${s.notes?`<div class="sn-preview">${s.notes}</div><div class="sn-full">${s.notes}</div>`:''}
         <div class="sf">
-          ${!isRest?`<span class="qbadge ${qClass(s.quality)}">${s.quality}/5</span>`:`<span class="qbadge qrd">Rest</span>`}
+          ${!isRest?`<span class="qbadge ${qClass(s.quality)}">${qLabel(s.quality)}</span>`:`<span class="qbadge qrd">Rest</span>`}
           <div class="ach">${chips}</div>
-          <span class="expand-hint">tap to expand</span>
+          ${showExpand?`<span class="expand-hint">tap to expand</span>`:''}
         </div>
-        <div class="sc-detail">
-          ${detailHtml}
-          <div class="sc-acts">
-            <button class="ebtn" onclick="event.stopPropagation();editSession(${s.id})">Edit</button>
-            <button class="dbtn" onclick="event.stopPropagation();confirmDel(${s.id})">Delete</button>
-          </div>
-          <div class="cdel" id="cdel-${s.id}">
-            <span>Delete this session?</span>
-            <button class="yes-del" onclick="event.stopPropagation();doDelete(${s.id})">Yes, delete</button>
-            <button onclick="event.stopPropagation();cancelDel(${s.id})">Cancel</button>
-          </div>
+        ${showExpand?`<div class="sc-detail">${detailHtml}<div class="sc-acts">
+          <button class="ebtn" onclick="event.stopPropagation();editSession(${s.id})">Edit</button>
+          <button class="dbtn" onclick="event.stopPropagation();confirmDel(${s.id})">Delete</button>
         </div>
+        <div class="cdel" id="cdel-${s.id}">
+          <span>Delete this session?</span>
+          <button class="yes-del" onclick="event.stopPropagation();doDelete(${s.id})">Yes, delete</button>
+          <button onclick="event.stopPropagation();cancelDel(${s.id})">Cancel</button>
+        </div></div>`:`<div class="sc-acts" style="margin-top:10px;border-top:0.5px solid var(--border);padding-top:9px;">
+          <button class="ebtn" onclick="event.stopPropagation();editSession(${s.id})">Edit</button>
+          <button class="dbtn" onclick="event.stopPropagation();confirmDel(${s.id})">Delete</button>
+        </div>
+        <div class="cdel" id="cdel-${s.id}">
+          <span>Delete this session?</span>
+          <button class="yes-del" onclick="event.stopPropagation();doDelete(${s.id})">Yes, delete</button>
+          <button onclick="event.stopPropagation();cancelDel(${s.id})">Cancel</button>
+        </div>`}
       </div>`;
     });
   });
-
-  html+=`<button class="export-btn" onclick="exportData()">Export all data (JSON backup)</button>`;
   c.innerHTML=html;
 }
 
@@ -450,7 +501,7 @@ function confirmDel(id){document.getElementById('cdel-'+id).classList.add('show'
 function cancelDel(id){document.getElementById('cdel-'+id).classList.remove('show');}
 function doDelete(id){
   sessions=sessions.filter(s=>s.id!==id);
-  save('trckng_sessions',sessions);
+  sv('trckng_sessions',sessions);
   renderFeed();
   showToast('Session deleted');
 }
@@ -459,8 +510,8 @@ function editSession(id){
   const s=sessions.find(x=>x.id===id);
   if(!s)return;
   logState={
-    type:s.type,time:s.time,quality:s.quality||3,
-    readiness:s.readiness||3,
+    type:s.type,
+    quality:s.quality===undefined?null:s.quality,
     athletes:[...(s.athletes||[])],
     reps:JSON.parse(JSON.stringify(s.results||{})),
     editId:id
@@ -472,14 +523,76 @@ function editSession(id){
     document.getElementById('log-notes').value=s.notes||'';
     document.getElementById('log-title').textContent='Edit session';
     document.getElementById('save-session-btn').textContent='Update session';
-    syncTypeButtons(s.type);
-    syncTimeButtons(s.time);
-    syncQButtons('quality-sel',s.quality||3);
-    syncQButtons('readiness-sel',s.readiness||3);
+    document.getElementById('draft-banner').style.display='none';
+    syncTypeBtns('log-type-sel',s.type);
+    syncQBtns('quality-sel',s.quality===undefined?null:s.quality);
     toggleRestFields(s.type==='Rest');
+    const ta1=document.getElementById('log-completed');
+    const ta2=document.getElementById('log-notes');
+    if(ta1)autoResize(ta1);
+    if(ta2)autoResize(ta2);
     renderChecklist();
     renderRepBlocks();
   },50);
+}
+
+/* ---- QUICK LOG ---- */
+function initQuickLog(){
+  const t=new Date();
+  document.getElementById('ql-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  qlState={type:'Training',quality:null,athletes:[]};
+  syncTypeBtns('ql-type-sel','Training');
+  syncQBtns('ql-qsel',null);
+  document.getElementById('ql-quality-wrap').style.display='block';
+  renderQlChecklist();
+}
+
+function renderQlChecklist(){
+  const c=document.getElementById('ql-checklist');
+  if(!athletes.length){
+    c.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0;">No athletes yet — add them in the Athletes tab first.</div>';
+    return;
+  }
+  c.innerHTML=athletes.map(a=>`
+    <div class="chk-row" onclick="qlToggleAth(${a.id})">
+      <div class="chk-c${qlState.athletes.includes(a.id)?' on':''}">${qlState.athletes.includes(a.id)?'✓':''}</div>
+      <div><div class="chk-n">${a.name}</div><div class="chk-e">${a.event}</div></div>
+    </div>`).join('');
+}
+
+function qlToggleAth(id){
+  if(qlState.athletes.includes(id))qlState.athletes=qlState.athletes.filter(x=>x!==id);
+  else qlState.athletes.push(id);
+  renderQlChecklist();
+}
+
+function qlSelType(btn,val){
+  qlState.type=val;
+  syncTypeBtns('ql-type-sel',val);
+  document.getElementById('ql-quality-wrap').style.display=val==='Rest'?'none':'block';
+}
+
+function qlSelQ(btn,n){
+  qlState.quality=n;
+  syncQBtns('ql-qsel',n);
+}
+
+function saveQuickLog(){
+  const date=document.getElementById('ql-date').value;
+  if(!date){showToast('Pick a date first');return;}
+  const session={
+    id:Date.now(),date,
+    type:qlState.type,
+    time:'',completed:'',notes:'',
+    athletes:[...qlState.athletes],
+    results:{},
+    quality:qlState.type==='Rest'?null:qlState.quality,
+    savedAt:new Date().toISOString()
+  };
+  sessions.unshift(session);
+  sv('trckng_sessions',sessions);
+  showToast('Saved');
+  setTimeout(()=>nav('feed',document.getElementById('nav-feed')),600);
 }
 
 /* ---- CALENDAR ---- */
@@ -504,12 +617,13 @@ function renderCal(){
     }
   });
 
-  let g45=0,g3=0,g12=0,gRest=0,tot=0;
+  let g45=0,g3=0,g12=0,gSkip=0,gRest=0,tot=0;
   sessions.forEach(s=>{
     const d=new Date(s.date+'T12:00:00');
     if(d.getFullYear()===year&&d.getMonth()===month){
       tot++;
       if(s.type==='Rest')gRest++;
+      else if(s.quality===null||s.quality===undefined)gSkip++;
       else if(s.quality>=4)g45++;
       else if(s.quality===3)g3++;
       else g12++;
@@ -517,6 +631,7 @@ function renderCal(){
   });
 
   const workSessions=tot-gRest;
+  const scoredSessions=workSessions-gSkip;
   const mx=Math.max(g45,g3,g12,1);
   const scale=60;
   const h45=g45?Math.max(Math.round((g45/mx)*scale),4):0;
@@ -546,26 +661,15 @@ function renderCal(){
   }
   html+=`</div>`;
 
-  html+=`<div class="tcard"><div class="tcard-title">${moName} — ${workSessions} session${workSessions!==1?'s':''} logged${gRest?`, ${gRest} rest day${gRest!==1?'s':''}`:''}`;
-  html+=`</div>`;
+  html+=`<div class="tcard">
+    <div class="tcard-title">Session quality — ${moName}</div>
+    <div class="tcard-sub">${workSessions} session${workSessions!==1?'s':''} logged${gRest?` · ${gRest} rest day${gRest!==1?'s':''}`:''}</div>`;
 
-  if(workSessions>0){
+  if(scoredSessions>0){
     html+=`<div class="tally-wrap">
-      <div class="tbc">
-        <div class="tbv">${g45}</div>
-        <div class="tbf" style="height:${h45}px;background:#639922;"></div>
-        <div class="tbl">4–5</div>
-      </div>
-      <div class="tbc">
-        <div class="tbv">${g3}</div>
-        <div class="tbf" style="height:${h3}px;background:#EAB308;"></div>
-        <div class="tbl">3</div>
-      </div>
-      <div class="tbc">
-        <div class="tbv">${g12}</div>
-        <div class="tbf" style="height:${h12}px;background:#A32D2D;"></div>
-        <div class="tbl">1–2</div>
-      </div>
+      <div class="tbc"><div class="tbv">${g45}</div><div class="tbf" style="height:${h45}px;background:#639922;"></div><div class="tbl">4–5</div></div>
+      <div class="tbc"><div class="tbv">${g3}</div><div class="tbf" style="height:${h3}px;background:#EAB308;"></div><div class="tbl">3</div></div>
+      <div class="tbc"><div class="tbv">${g12}</div><div class="tbf" style="height:${h12}px;background:#A32D2D;"></div><div class="tbl">1–2</div></div>
     </div>`;
   } else {
     html+=`<div style="text-align:center;padding:16px 0;color:var(--text3);font-size:13px;">No scored sessions this month</div>`;
@@ -573,25 +677,23 @@ function renderCal(){
   html+=`</div>`;
 
   html+=`<div class="leg">
-    <div class="li"><div class="ld" style="background:#639922"></div>4–5 Excellent</div>
-    <div class="li"><div class="ld" style="background:#EAB308"></div>3 Average</div>
-    <div class="li"><div class="ld" style="background:#A32D2D"></div>1–2 Poor</div>
-    <div class="li"><div class="ld" style="background:#B4B2A9"></div>Rest day</div>
-    <div class="li"><div class="ld" style="background:var(--bluebg);border:1px solid var(--blue)"></div>Multi-session</div>
+    <div class="li"><div class="ld" style="background:#639922"></div>4–5</div>
+    <div class="li"><div class="ld" style="background:#EAB308"></div>3</div>
+    <div class="li"><div class="ld" style="background:#A32D2D"></div>1–2</div>
+    <div class="li"><div class="ld" style="background:#B4B2A9"></div>Rest</div>
+    <div class="li"><div class="ld" style="background:var(--bluebg);border:1px solid var(--blue)"></div>Multi</div>
   </div>`;
   c.innerHTML=html;
 }
 
 function prevMonth(){
   if(!calMonth){const n=new Date();calMonth={year:n.getFullYear(),month:n.getMonth()};}
-  calMonth.month--;
-  if(calMonth.month<0){calMonth.month=11;calMonth.year--;}
+  calMonth.month--;if(calMonth.month<0){calMonth.month=11;calMonth.year--;}
   renderCal();
 }
 function nextMonth(){
   if(!calMonth){const n=new Date();calMonth={year:n.getFullYear(),month:n.getMonth()};}
-  calMonth.month++;
-  if(calMonth.month>11){calMonth.month=0;calMonth.year++;}
+  calMonth.month++;if(calMonth.month>11){calMonth.month=0;calMonth.year++;}
   renderCal();
 }
 
@@ -603,18 +705,17 @@ function renderAthletes(){
     return;
   }
   let html=athletes.map(a=>{
-    const athSessions=sessions.filter(s=>s.athletes&&s.athletes.includes(a.id)&&s.type!=='Rest');
-    athSessions.sort((x,y)=>y.date.localeCompare(x.date));
-    const ls=athSessions.length?new Date(athSessions[0].date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'Never';
+    const athS=sessions.filter(s=>s.athletes&&s.athletes.includes(a.id)&&s.type!=='Rest');
+    athS.sort((x,y)=>y.date.localeCompare(x.date));
+    const ls=athS.length?new Date(athS[0].date+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'Never';
     const age=a.dob?Math.floor((new Date()-new Date(a.dob))/(365.25*24*3600*1000)):'';
-    const count=athSessions.length;
     return `<div class="ar" id="ar-${a.id}" onclick="toggleAthCard(${a.id})">
       <div class="av">${a.initials}</div>
       <div class="ai">
         <div class="an">${a.name}</div>
         <div class="as2">${[a.sport,a.event,age?age+'y':''].filter(Boolean).join(' · ')}</div>
-        <div class="ath-stat">${count} session${count!==1?'s':''} · Last: ${ls}</div>
-        <div class="ath-acts" style="display:none;">
+        <div class="ath-stat">${athS.length} session${athS.length!==1?'s':''} · Last: ${ls}</div>
+        <div class="ath-acts" id="ath-acts-${a.id}">
           <button class="ath-ebtn" onclick="event.stopPropagation();startEditAthlete(${a.id})">Edit</button>
           <button class="ath-dbtn" onclick="event.stopPropagation();confirmDelAthlete(${a.id})">Delete</button>
         </div>
@@ -631,21 +732,21 @@ function renderAthletes(){
 }
 
 function toggleAthCard(id){
-  const el=document.getElementById('ar-'+id);
-  if(!el)return;
-  const acts=el.querySelector('.ath-acts');
+  const acts=document.getElementById('ath-acts-'+id);
+  if(!acts)return;
   const isOpen=acts.style.display==='flex';
-  document.querySelectorAll('.ar').forEach(r=>{
-    r.querySelector('.ath-acts').style.display='none';
+  athletes.forEach(a=>{
+    const el=document.getElementById('ath-acts-'+a.id);
+    if(el)el.style.display='none';
   });
-  if(!isOpen&&acts)acts.style.display='flex';
+  if(!isOpen)acts.style.display='flex';
 }
 
 function confirmDelAthlete(id){document.getElementById('cadel-'+id).classList.add('show');}
 function cancelDelAthlete(id){document.getElementById('cadel-'+id).classList.remove('show');}
 function doDeleteAthlete(id){
   athletes=athletes.filter(a=>a.id!==id);
-  save('trckng_athletes',athletes);
+  sv('trckng_athletes',athletes);
   renderAthletes();
   showToast('Athlete removed');
 }
@@ -680,18 +781,15 @@ function saveAthlete(){
   const event=document.getElementById('na-event').value.trim();
   const dob=document.getElementById('na-dob').value;
   const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-
   if(editingAthleteId){
     const idx=athletes.findIndex(a=>a.id===editingAthleteId);
-    if(idx>-1){
-      athletes[idx]={...athletes[idx],name,sport:sport||'',event:event||'',dob,initials};
-      save('trckng_athletes',athletes);
-      showToast('Athlete updated');
-    }
+    if(idx>-1)athletes[idx]={...athletes[idx],name,sport:sport||'',event:event||'',dob,initials};
+    sv('trckng_athletes',athletes);
     editingAthleteId=null;
+    showToast('Athlete updated');
   } else {
     athletes.push({id:Date.now(),name,sport:sport||'',event:event||'',dob,initials});
-    save('trckng_athletes',athletes);
+    sv('trckng_athletes',athletes);
     showToast(name+' added');
   }
   setTimeout(()=>go('athletes'),600);
@@ -699,40 +797,71 @@ function saveAthlete(){
 
 /* ---- LOG FORM ---- */
 function initLog(){
-  if(!logState.editId){
-    const t=new Date();
-    document.getElementById('log-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+  if(logState.editId)return;
+  const draft=loadDraft();
+  if(draft){
+    logState={type:draft.type,quality:draft.quality,athletes:draft.athletes||[],reps:draft.reps||{},editId:null};
+    document.getElementById('log-date').value=draft.date||todayStr();
+    document.getElementById('log-completed').value=draft.completed||'';
+    document.getElementById('log-notes').value=draft.notes||'';
+    document.getElementById('log-title').textContent='Log session';
+    document.getElementById('save-session-btn').textContent='Save session';
+    document.getElementById('draft-banner').style.display='flex';
+    syncTypeBtns('log-type-sel',draft.type);
+    syncQBtns('quality-sel',draft.quality);
+    toggleRestFields(draft.type==='Rest');
+    setTimeout(()=>{
+      const ta1=document.getElementById('log-completed');
+      const ta2=document.getElementById('log-notes');
+      if(ta1&&ta1.value)autoResize(ta1);
+      if(ta2&&ta2.value)autoResize(ta2);
+    },50);
+  } else {
+    document.getElementById('log-date').value=todayStr();
     document.getElementById('log-completed').value='';
     document.getElementById('log-notes').value='';
     document.getElementById('log-completed').placeholder=CPH['Training'];
     document.getElementById('log-title').textContent='Log session';
     document.getElementById('save-session-btn').textContent='Save session';
-    logState={type:'Training',time:'Morning',quality:3,readiness:3,athletes:[],reps:{},editId:null};
-    syncTypeButtons('Training');
-    syncTimeButtons('Morning');
-    syncQButtons('quality-sel',3);
-    syncQButtons('readiness-sel',3);
+    document.getElementById('draft-banner').style.display='none';
+    logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
+    syncTypeBtns('log-type-sel','Training');
+    syncQBtns('quality-sel',null);
     toggleRestFields(false);
   }
   renderChecklist();
   renderRepBlocks();
 }
 
-function syncTypeButtons(val){
-  document.querySelectorAll('.tbtn').forEach(b=>{
+function todayStr(){
+  const t=new Date();
+  return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+}
+
+function syncTypeBtns(selId,val){
+  const sel=document.getElementById(selId);
+  if(!sel)return;
+  sel.querySelectorAll('.tbtn').forEach(b=>{
     b.classList.remove('sel');
-    const bval=b.getAttribute('onclick').match(/'([^']+)'/);
-    if(bval&&bval[1]===val)b.classList.add('sel');
+    const m=b.getAttribute('onclick').match(/'([^']+)'/);
+    if(m&&m[1]===val)b.classList.add('sel');
   });
 }
-function syncTimeButtons(val){
-  document.querySelectorAll('.tmbtn').forEach(b=>{
-    b.classList.toggle('sel',b.textContent.trim()===val);
+
+function syncQBtns(selId,n){
+  const sel=document.getElementById(selId);
+  if(!sel)return;
+  sel.querySelectorAll('.qsbtn').forEach(b=>{
+    b.className='qsbtn';
+    if(b.classList.contains('skip')||b.textContent==='Skip')b.classList.add('skip');
   });
-}
-function syncQButtons(selId,n){
-  const btns=document.getElementById(selId).querySelectorAll('.qsbtn');
-  btns.forEach((b,i)=>{b.className='qsbtn';if(i+1===n)b.classList.add('s'+n);});
+  if(n===null||n===undefined){
+    const skip=sel.querySelector('.skip');
+    if(skip)skip.classList.add('skip');
+    return;
+  }
+  const btns=sel.querySelectorAll('.qsbtn:not(.skip)');
+  if(btns[n-1])btns[n-1].classList.add('s'+n);
 }
 
 function toggleRestFields(isRest){
@@ -741,15 +870,16 @@ function toggleRestFields(isRest){
   if(detail)detail.style.display=isRest?'none':'block';
   if(isRest){
     if(hint)hint.style.display='none';
-    document.getElementById('ath-results-wrap').innerHTML='';
+    const w=document.getElementById('ath-results-wrap');
+    if(w)w.innerHTML='';
   }
 }
 
 function renderChecklist(){
   const c=document.getElementById('ath-checklist');
+  if(!c)return;
   if(!athletes.length){
     c.innerHTML='<div style="font-size:13px;color:var(--text3);padding:8px 0;">No athletes yet — add them in the Athletes tab first.</div>';
-    document.getElementById('results-hint').style.display='none';
     return;
   }
   c.innerHTML=athletes.map(a=>`
@@ -758,7 +888,7 @@ function renderChecklist(){
       <div><div class="chk-n">${a.name}</div><div class="chk-e">${a.event}</div></div>
     </div>`).join('');
   const hint=document.getElementById('results-hint');
-  if(hint)hint.style.display=logState.athletes.length||logState.type==='Rest'?'none':'block';
+  if(hint)hint.style.display=logState.athletes.length&&logState.type!=='Rest'?'none':'block';
 }
 
 function toggleAth(id){
@@ -771,10 +901,12 @@ function toggleAth(id){
   }
   renderChecklist();
   renderRepBlocks();
+  saveDraft();
 }
 
 function renderRepBlocks(){
   const w=document.getElementById('ath-results-wrap');
+  if(!w)return;
   if(!logState.athletes.length||logState.type==='Rest'){w.innerHTML='';return;}
   const cols=COLS[logState.type]||COLS['Training'];
   let html=`<div class="fs"><label class="lbl">Individual results</label>`;
@@ -787,9 +919,9 @@ function renderRepBlocks(){
     reps.forEach((rep,i)=>{
       html+=`<div class="rep-row">
         <div class="rep-n">${i+1}</div>
-        <input class="ri" type="text" placeholder="—" value="${rep.a||''}" oninput="ur(${id},${i},'a',this.value)"/>
-        <input class="ri" type="text" placeholder="—" value="${rep.b||''}" oninput="ur(${id},${i},'b',this.value)"/>
-        <input class="ri" type="text" placeholder="—" value="${rep.c||''}" oninput="ur(${id},${i},'c',this.value)"/>
+        <input class="ri" type="text" placeholder="—" value="${rep.a||''}" oninput="ur(${id},${i},'a',this.value);saveDraft()"/>
+        <input class="ri" type="text" placeholder="—" value="${rep.b||''}" oninput="ur(${id},${i},'b',this.value);saveDraft()"/>
+        <input class="ri" type="text" placeholder="—" value="${rep.c||''}" oninput="ur(${id},${i},'c',this.value);saveDraft()"/>
         <button class="del-rep" onclick="delRep(${id},${i})">×</button>
       </div>`;
     });
@@ -808,23 +940,18 @@ function delRep(id,i){
 
 function selType(btn,val){
   logState.type=val;
-  syncTypeButtons(val);
+  syncTypeBtns('log-type-sel',val);
   const ph=document.getElementById('log-completed');
   if(ph)ph.placeholder=CPH[val]||CPH['Training'];
   toggleRestFields(val==='Rest');
   renderRepBlocks();
+  saveDraft();
 }
-function selTime(btn,val){
-  logState.time=val;
-  syncTimeButtons(val);
-}
+
 function selQ(btn,n){
   logState.quality=n;
-  syncQButtons('quality-sel',n);
-}
-function selReadiness(btn,n){
-  logState.readiness=n;
-  syncQButtons('readiness-sel',n);
+  syncQBtns('quality-sel',n);
+  saveDraft();
 }
 
 function saveSession(){
@@ -834,14 +961,12 @@ function saveSession(){
   const session={
     id:logState.editId||Date.now(),
     date,
-    time:logState.time,
     type:logState.type,
     completed:isRest?'':document.getElementById('log-completed').value.trim(),
     notes:isRest?'':document.getElementById('log-notes').value.trim(),
     athletes:[...logState.athletes],
     results:isRest?{}:JSON.parse(JSON.stringify(logState.reps)),
     quality:isRest?null:logState.quality,
-    readiness:isRest?null:logState.readiness,
     savedAt:new Date().toISOString()
   };
   if(logState.editId){
@@ -851,24 +976,12 @@ function saveSession(){
   } else {
     sessions.unshift(session);
   }
-  save('trckng_sessions',sessions);
+  sv('trckng_sessions',sessions);
+  clearDraft();
   const wasEdit=!!logState.editId;
-  logState={type:'Training',time:'Morning',quality:3,readiness:3,athletes:[],reps:{},editId:null};
+  logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
   showToast(wasEdit?'Session updated':'Session saved');
-  setTimeout(()=>{nav('feed',document.getElementById('nav-feed'));},700);
-}
-
-/* ---- EXPORT ---- */
-function exportData(){
-  const data={athletes,sessions,exportedAt:new Date().toISOString()};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download=`trckng-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('Data exported');
+  setTimeout(()=>nav('feed',document.getElementById('nav-feed')),700);
 }
 
 function showToast(msg){
