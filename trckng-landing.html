@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="trckng — a simple training diary for coaches and athletes in elite sport. Log sessions, track performance, reflect and improve."/>
+<title>trckng — Training, tracked.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0a0a0a;
+  --white:#f5f4f0;
+  --green:#1a3d1f;
+  --green-mid:#2d6b35;
+  --green-light:#4a9e56;
+  --green-pale:#e8f2e9;
+  --silver:#a8a8a0;
+  --silver-light:#d4d4cc;
+  --silver-dark:#6b6b65;
+  --border:rgba(255,255,255,0.08);
+  --border-light:rgba(255,255,255,0.14);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* NAV */
+nav{padding:20px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);z-index:100;}
+.nav-wm{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;letter-spacing:-0.5px;color:var(--white);}
+.nav-wm span{color:var(--green-light);}
+.nav-links{display:flex;gap:8px;}
+.nav-link{font-size:13px;color:var(--silver);padding:8px 16px;border:0.5px solid var(--border-light);border-radius:6px;text-decoration:none;transition:all 0.2s;white-space:nowrap;}
+.nav-link:hover{color:var(--white);border-color:rgba(255,255,255,0.3);}
+.nav-link.primary{background:var(--green);color:var(--white);border-color:var(--green-mid);}
+.nav-link.primary:hover{background:var(--green-mid);}
+
+/* HERO */
+.hero{padding:100px 32px 80px;max-width:780px;margin:0 auto;}
+.hero-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--green-light);margin-bottom:28px;display:flex;align-items:center;gap:10px;}
+.hero-label::before{content:'';display:block;width:24px;height:0.5px;background:var(--green-light);}
+.hero-h1{font-size:clamp(42px,8vw,80px);font-weight:300;line-height:1.05;letter-spacing:-0.03em;color:var(--white);margin-bottom:16px;}
+.hero-h1 em{font-style:normal;color:var(--green-light);}
+.hero-sub{font-size:clamp(16px,2.5vw,20px);color:var(--silver);line-height:1.6;max-width:520px;margin-bottom:48px;font-weight:300;}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:500;text-decoration:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;}
+.cta-coach{background:var(--white);color:var(--black);}
+.cta-coach:hover{background:var(--silver-light);}
+.cta-athlete{background:transparent;color:var(--white);border:0.5px solid var(--border-light);}
+.cta-athlete:hover{border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.05);}
+.cta-arrow{font-size:13px;opacity:0.6;}
+
+/* DIVIDER */
+.section-divider{height:0.5px;background:var(--border);margin:0 32px;}
+
+/* FOR WHO */
+.for-who{padding:80px 32px;max-width:780px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.for-card{background:rgba(255,255,255,0.03);border:0.5px solid var(--border-light);border-radius:12px;padding:32px;}
+.for-card-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--green-light);margin-bottom:20px;}
+.for-card-title{font-size:22px;font-weight:400;color:var(--white);margin-bottom:12px;letter-spacing:-0.02em;}
+.for-card-body{font-size:14px;color:var(--silver);line-height:1.7;margin-bottom:24px;}
+.for-card-features{list-style:none;margin-bottom:28px;}
+.for-card-features li{font-size:13px;color:var(--silver-light);padding:7px 0;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;}
+.for-card-features li:last-child{border-bottom:none;}
+.feature-dot{width:4px;height:4px;border-radius:50%;background:var(--green-light);flex-shrink:0;}
+.for-card-cta{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--white);text-decoration:none;padding:10px 20px;border:0.5px solid var(--border-light);border-radius:6px;transition:all 0.2s;}
+.for-card-cta:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.3);}
+.for-card.featured{border-color:var(--green-mid);background:rgba(26,61,31,0.2);}
+
+/* HOW IT WORKS */
+.how{padding:80px 32px;max-width:780px;margin:0 auto;}
+.section-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--silver-dark);margin-bottom:40px;display:flex;align-items:center;gap:10px;}
+.section-label::before{content:'';display:block;width:24px;height:0.5px;background:var(--silver-dark);}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.step-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--green-light);margin-bottom:12px;}
+.step-title{font-size:17px;font-weight:500;color:var(--white);margin-bottom:8px;letter-spacing:-0.01em;}
+.step-body{font-size:13px;color:var(--silver);line-height:1.65;}
+
+/* QUOTE */
+.quote-section{padding:80px 32px;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
+.quote-inner{max-width:620px;margin:0 auto;}
+.quote-text{font-size:clamp(20px,3vw,28px);font-weight:300;color:var(--white);line-height:1.5;letter-spacing:-0.02em;margin-bottom:24px;}
+.quote-text em{font-style:italic;color:var(--green-light);}
+.quote-attr{font-family:'DM Mono',monospace;font-size:11px;color:var(--silver-dark);letter-spacing:0.08em;text-transform:uppercase;}
+
+/* BETA */
+.beta{padding:80px 32px;max-width:780px;margin:0 auto;}
+.beta-inner{background:rgba(255,255,255,0.03);border:0.5px solid var(--border-light);border-radius:12px;padding:40px;}
+.beta-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--green-light);margin-bottom:16px;}
+.beta-title{font-size:clamp(22px,4vw,32px);font-weight:400;color:var(--white);margin-bottom:12px;letter-spacing:-0.02em;}
+.beta-body{font-size:15px;color:var(--silver);line-height:1.7;margin-bottom:32px;max-width:480px;}
+.beta-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+
+/* INSTALL */
+.install{padding:0 32px 80px;max-width:780px;margin:0 auto;}
+.install-inner{border:0.5px solid var(--border);border-radius:12px;padding:32px;}
+.install-title{font-size:15px;font-weight:500;color:var(--white);margin-bottom:20px;}
+.install-steps{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.install-col-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--silver-dark);margin-bottom:12px;}
+.install-list{list-style:none;}
+.install-list li{font-size:13px;color:var(--silver);padding:5px 0;display:flex;gap:10px;}
+.install-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--green-light);flex-shrink:0;min-width:16px;}
+
+/* FOOTER */
+footer{padding:32px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-wm{font-family:'DM Mono',monospace;font-size:13px;color:var(--silver-dark);}
+.footer-note{font-size:12px;color:var(--silver-dark);}
+.footer-links{display:flex;gap:20px;}
+.footer-link{font-size:12px;color:var(--silver-dark);text-decoration:none;}
+.footer-link:hover{color:var(--silver);}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  nav{padding:16px 20px;}
+  .nav-links{gap:6px;}
+  .nav-link{padding:7px 12px;font-size:12px;}
+  .hero{padding:64px 20px 56px;}
+  .hero-ctas{flex-direction:column;}
+  .cta-btn{justify-content:center;}
+  .for-who{grid-template-columns:1fr;padding:56px 20px;}
+  .how{padding:56px 20px;}
+  .steps{grid-template-columns:1fr;}
+  .quote-section{padding:56px 20px;}
+  .beta{padding:56px 20px;}
+  .beta-inner{padding:28px 24px;}
+  .beta-ctas{flex-direction:column;}
+  .install{padding:0 20px 56px;}
+  .install-steps{grid-template-columns:1fr;}
+  footer{padding:24px 20px;flex-direction:column;align-items:flex-start;}
+  .section-divider{margin:0 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-wm">tr<span>ck</span>ng</span>
+  <div class="nav-links">
+    <a href="." class="nav-link">Coach</a>
+    <a href="athlete" class="nav-link primary">Athlete</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Beta — free to use</div>
+  <h1 class="hero-h1">Training,<br><em>tracked.</em></h1>
+  <p class="hero-sub">A simple diary for coaches and athletes who take their sport seriously. Log every session, reflect honestly, and build a record that travels with you.</p>
+  <div class="hero-ctas">
+    <a href="." class="cta-btn cta-coach">I'm a coach <span class="cta-arrow">→</span></a>
+    <a href="athlete" class="cta-btn cta-athlete">I'm an athlete <span class="cta-arrow">→</span></a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="for-who">
+  <div class="for-card featured">
+    <div class="for-card-label">For coaches</div>
+    <h2 class="for-card-title">Everything you know about your athletes, in one place.</h2>
+    <p class="for-card-body">You already keep a paper diary. This is the version you can't leave at home.</p>
+    <ul class="for-card-features">
+      <li><div class="feature-dot"></div>Log sessions for your full squad</li>
+      <li><div class="feature-dot"></div>Individual rep results per athlete</li>
+      <li><div class="feature-dot"></div>Session quality score and notes</li>
+      <li><div class="feature-dot"></div>Monthly calendar with quality trends</li>
+      <li><div class="feature-dot"></div>Quick log for trackside entries</li>
+    </ul>
+    <a href="." class="for-card-cta">Open coach app →</a>
+  </div>
+  <div class="for-card">
+    <div class="for-card-label">For athletes</div>
+    <h2 class="for-card-title">Your training diary. Private, honest, always with you.</h2>
+    <p class="for-card-body">What you write here is yours alone. Log how training really felt, not just what happened.</p>
+    <ul class="for-card-features">
+      <li><div class="feature-dot"></div>Log every session and rep</li>
+      <li><div class="feature-dot"></div>RPE score after every session</li>
+      <li><div class="feature-dot"></div>Private notes — only you can see them</li>
+      <li><div class="feature-dot"></div>Calendar showing your consistency</li>
+      <li><div class="feature-dot"></div>Quick log in under 20 seconds</li>
+    </ul>
+    <a href="athlete" class="for-card-cta">Open athlete app →</a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="how">
+  <div class="section-label">How it works</div>
+  <div class="steps">
+    <div>
+      <div class="step-num">01</div>
+      <div class="step-title">Open the app</div>
+      <p class="step-body">No download needed. Open the link in Safari, add it to your home screen, and it works like a native app — including offline.</p>
+    </div>
+    <div>
+      <div class="step-num">02</div>
+      <div class="step-title">Log your session</div>
+      <p class="step-body">Full session log or quick log in three taps. Results, notes, quality score. Your data is saved automatically as you type.</p>
+    </div>
+    <div>
+      <div class="step-num">03</div>
+      <div class="step-title">Build your record</div>
+      <p class="step-body">Every session adds to a diary you can look back on. The calendar shows your consistency and quality trends month by month.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="quote-section">
+  <div class="quote-inner">
+    <p class="quote-text">"I built this because I kept leaving my notebook at home. After six months of coaching, I had gaps everywhere. <em>trckng</em> is the diary that's always in my pocket."</p>
+    <div class="quote-attr">— Coach, 400m hurdles · Olympic sport</div>
+  </div>
+</section>
+
+<section class="beta">
+  <div class="beta-inner">
+    <div class="beta-label">Beta — v1</div>
+    <h2 class="beta-title">Free to use. Built in the open.</h2>
+    <p class="beta-body">trckng is in active development. It's free, it works, and it's being used daily by coaches and athletes right now. If you use it and have feedback, it will be listened to.</p>
+    <div class="beta-ctas">
+      <a href="." class="cta-btn cta-coach">Coach app →</a>
+      <a href="athlete" class="cta-btn cta-athlete">Athlete app →</a>
+    </div>
+  </div>
+</section>
+
+<section class="install">
+  <div class="install-inner">
+    <div class="install-title">Add to your home screen</div>
+    <div class="install-steps">
+      <div>
+        <div class="install-col-title">iPhone — Safari</div>
+        <ol class="install-list">
+          <li><span class="install-num">1</span>Open the app link in Safari</li>
+          <li><span class="install-num">2</span>Tap the share icon at the bottom</li>
+          <li><span class="install-num">3</span>Tap "Add to Home Screen"</li>
+          <li><span class="install-num">4</span>Tap Add — done</li>
+        </ol>
+      </div>
+      <div>
+        <div class="install-col-title">Android — Chrome</div>
+        <ol class="install-list">
+          <li><span class="install-num">1</span>Open the app link in Chrome</li>
+          <li><span class="install-num">2</span>Tap the three-dot menu</li>
+          <li><span class="install-num">3</span>Tap "Add to Home Screen"</li>
+          <li><span class="install-num">4</span>Tap Add — done</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-wm">trckng — beta v1</span>
+  <div class="footer-links">
+    <a href="." class="footer-link">Coach</a>
+    <a href="athlete" class="footer-link">Athlete</a>
+  </div>
+  <span class="footer-note">Your data stays on your device.</span>
+    <a href="https://forms.gle/XjP8UC8WMBfvqgM29" target="_blank" class="footer-link">Report a bug</a>
+</footer>
+
+</body>
+</html>
