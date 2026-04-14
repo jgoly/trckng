@@ -320,6 +320,7 @@ textarea::placeholder{color:var(--text3);}
   </div>
 
   <div class="toast" id="toast"></div>
+  <div style="text-align:center;padding:10px 20px;background:var(--bg);border-top:0.5px solid var(--border);flex-shrink:0;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px)"><a href="https://forms.gle/XjP8UC8WMBfvqgM29" target="_blank" style="font-size:12px;color:var(--text3);text-decoration:none;font-family:'DM Sans',sans-serif;">Found a bug? Let us know →</a></div>
 </div>
 
 <script>
@@ -810,5 +811,6 @@ function showToast(msg){
 if(!profile.name)setTimeout(()=>go('edit-profile'),300);
 else renderFeed();
 </script>
+
 </body>
 </html>
