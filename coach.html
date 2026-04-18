@@ -436,7 +436,12 @@ textarea::placeholder{color:var(--text3);}
 <script>
 const SUPABASE_URL='https://jlithdmmdqlmxekhfwwp.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaXRoZG1tZHFsbXhla2hmd3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODUzODMsImV4cCI6MjA5MjA2MTM4M30.Ee80guMiN1Hx13EWo7XfmJJJyRh0ANODyV-ZrThVifs';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let sb;
+try{
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+}catch(e){
+  console.error('Supabase init failed:',e);
+}
 
 const TAGCLS={Training:'t-tr',Competition:'t-co','S&C':'t-sc',Rest:'t-rd'};
 const COLS={Training:['Result','Dist / time','Recovery'],Competition:['Result','Dist / time','Recovery'],'S&C':['Weight','Sets / reps','Rest']};
@@ -488,6 +493,11 @@ async function handleAuthState(){
     retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
     document.getElementById('loading-text').after(retry);
   },8000);
+  if(!sb){
+    clearTimeout(timeout);
+    document.getElementById('loading-text').textContent='Failed to initialise. Please refresh the page.';
+    return;
+  }
   try{
     const {data:{session}}=await sb.auth.getSession();
     clearTimeout(timeout);
@@ -1095,7 +1105,7 @@ async function saveSession(){
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
-handleAuthState();
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',handleAuthState);}else{handleAuthState();}
 </script>
 </body>
 </html>
