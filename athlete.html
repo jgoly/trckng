@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://jgoly.github.io/trckng/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -403,68 +403,33 @@ async function sendMagicLink(){
 
 async function handleAuthState(){
   showScreen('loading');
-  const {data:{session}}=await sb.auth.getSession();
-  if(session){currentUser=session.user;await loadData();}
-  else showScreen('auth');
+  const timeout=setTimeout(()=>{
+    document.getElementById('loading-text').textContent='Connection slow — check your signal and try again.';
+    const retry=document.createElement('button');
+    retry.textContent='Retry';retry.className='sbtn';retry.style.cssText='margin:16px auto;width:auto;padding:12px 32px;display:block;';
+    retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
+    document.getElementById('loading-text').after(retry);
+  },8000);
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    clearTimeout(timeout);
+    if(session){currentUser=session.user;await loadData();}
+    else showScreen('auth');
+  }catch(err){
+    clearTimeout(timeout);
+    document.getElementById('loading-text').textContent='Connection error. Check your signal and try again.';
+    const retry=document.createElement('button');
+    retry.textContent='Retry';retry.className='sbtn';retry.style.cssText='margin:16px auto;width:auto;padding:12px 32px;display:block;';
+    retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
+    document.getElementById('loading-text').after(retry);
+    return;
+  }
   sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session){currentUser=session.user;showScreen('loading');await loadData();}
     if(event==='SIGNED_OUT'){currentUser=null;sessions=[];userProfile=null;showScreen('auth');}
   });
 }
 
-async function loadData(){
-  document.getElementById('loading-text').textContent='Loading your profile...';
-  const {data:prof}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
-  if(prof)userProfile=prof;
-  else{
-    await sb.from('profiles').insert({id:currentUser.id,email:currentUser.email,role:'athlete'});
-    userProfile={id:currentUser.id,email:currentUser.email,role:'athlete'};
-  }
-  document.getElementById('loading-text').textContent='Loading sessions...';
-  const {data:sesData}=await sb.from('sessions').select('*, session_results(*)').eq('user_id',currentUser.id).order('date',{ascending:false}).order('saved_at',{ascending:false});
-  if(sesData){
-    sessions=sesData.map(s=>({...s,reps:buildReps(s.session_results||[])}));
-  }
-  checkLocalImport();
-  nav('feed',document.getElementById('nav-feed'));
-}
-
-function buildReps(rows){
-  const reps=[];
-  rows.sort((a,b)=>a.rep_index-b.rep_index).forEach(r=>{reps[r.rep_index]={a:r.result||'',b:r.dist_time||'',c:r.recovery||''};});
-  return reps.filter(Boolean);
-}
-
-function checkLocalImport(){
-  const localSessions=ld('trckng_ath_sessions',[]);
-  if(localSessions.length>0&&sessions.length===0){
-    const banner=document.createElement('div');
-    banner.className='import-banner';banner.id='import-banner';
-    banner.innerHTML=`<div class="import-title">Import your existing data</div><div class="import-body">We found ${localSessions.length} session${localSessions.length!==1?'s':''} saved locally. Import them to your account so they're safe and available everywhere.</div><div class="import-btns"><button class="import-btn" onclick="dismissImport()">Skip</button><button class="import-btn primary" onclick="importLocalData()">Import now</button></div>`;
-    const feedCon=document.getElementById('feed-con');if(feedCon)feedCon.prepend(banner);
-  }
-}
-
-async function importLocalData(){
-  const localSessions=ld('trckng_ath_sessions',[]);
-  const localProfile=ld('trckng_ath_profile',{});
-  document.getElementById('import-banner').innerHTML='<div class="import-title">Importing...</div>';
-  if(localProfile.name&&!userProfile.name){
-    await sb.from('profiles').update({name:localProfile.name,sport:localProfile.sport||'',event:localProfile.event||'',dob:localProfile.dob||null}).eq('id',currentUser.id);
-    userProfile={...userProfile,...localProfile};
-  }
-  for(const s of localSessions){
-    const {data:newSession,error}=await sb.from('sessions').insert({user_id:currentUser.id,date:s.date,type:s.type,completed:s.completed||'',notes:s.notes||'',quality:s.quality||null,saved_at:s.savedAt||new Date().toISOString()}).select().single();
-    if(!error&&newSession&&s.reps&&s.reps.length){
-      const repRows=s.reps.filter(r=>r.a||r.b||r.c).map((r,i)=>({session_id:newSession.id,rep_index:i,result:r.a||'',dist_time:r.b||'',recovery:r.c||''}));
-      if(repRows.length)await sb.from('session_results').insert(repRows);
-    }
-  }
-  localStorage.removeItem('trckng_ath_sessions');localStorage.removeItem('trckng_ath_profile');
-  showToast('Import complete');await loadData();
-}
-
-function dismissImport(){const b=document.getElementById('import-banner');if(b)b.remove();}
 
 async function signOut(){await sb.auth.signOut();showToast('Signed out');}
 

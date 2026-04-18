@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://jgoly.github.io/trckng/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
@@ -481,26 +481,33 @@ async function sendMagicLink(){
 
 async function handleAuthState(){
   showScreen('loading');
-  const {data:{session}}=await sb.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    await loadData();
-  } else {
-    showScreen('auth');
+  const timeout=setTimeout(()=>{
+    document.getElementById('loading-text').textContent='Connection slow — check your signal and try again.';
+    const retry=document.createElement('button');
+    retry.textContent='Retry';retry.className='sbtn';retry.style.cssText='margin:16px auto;width:auto;padding:12px 32px;display:block;';
+    retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
+    document.getElementById('loading-text').after(retry);
+  },8000);
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    clearTimeout(timeout);
+    if(session){currentUser=session.user;await loadData();}
+    else showScreen('auth');
+  }catch(err){
+    clearTimeout(timeout);
+    document.getElementById('loading-text').textContent='Connection error. Check your signal and try again.';
+    const retry=document.createElement('button');
+    retry.textContent='Retry';retry.className='sbtn';retry.style.cssText='margin:16px auto;width:auto;padding:12px 32px;display:block;';
+    retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
+    document.getElementById('loading-text').after(retry);
+    return;
   }
   sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){
-      currentUser=session.user;
-      document.getElementById('loading-text').textContent='Loading your sessions...';
-      showScreen('loading');
-      await loadData();
-    }
-    if(event==='SIGNED_OUT'){
-      currentUser=null;athletes=[];sessions=[];
-      showScreen('auth');
-    }
+    if(event==='SIGNED_IN'&&session){currentUser=session.user;document.getElementById('loading-text').textContent='Loading your sessions...';showScreen('loading');await loadData();}
+    if(event==='SIGNED_OUT'){currentUser=null;athletes=[];sessions=[];showScreen('auth');}
   });
 }
+
 
 async function signOut(){
   await sb.auth.signOut();
