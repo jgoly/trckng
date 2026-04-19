@@ -427,7 +427,7 @@ async function handleAuthState(){
     else showScreen('auth');
   }catch(err){
     clearTimeout(timeout);
-    document.getElementById('loading-text').textContent='Error: '+(err.message||err.toString()).slice(0,80);
+    document.getElementById('loading-text').textContent='Connection error. Check your signal and try again.';
     const retry=document.createElement('button');
     retry.textContent='Retry';retry.className='sbtn';retry.style.cssText='margin:16px auto;width:auto;padding:12px 32px;display:block;';
     retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
@@ -442,6 +442,71 @@ async function handleAuthState(){
 
 
 async function signOut(){await sb.auth.signOut();showToast('Signed out');}
+async function loadData(){
+  document.getElementById('loading-text').textContent='Loading your profile...';
+  try{
+    const {data:prof,error:profErr}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+    if(prof){userProfile=prof;}
+    else{
+      const {data:newProf}=await sb.from('profiles').insert({id:currentUser.id,email:currentUser.email,role:'athlete'}).select().single();
+      if(newProf)userProfile=newProf;
+      else userProfile={id:currentUser.id,email:currentUser.email,role:'athlete'};
+    }
+  }catch(e){
+    userProfile={id:currentUser.id,email:currentUser.email,role:'athlete'};
+  }
+  document.getElementById('loading-text').textContent='Loading sessions...';
+  try{
+    const {data:sesData}=await sb.from('sessions').select('*, session_results(*)').eq('user_id',currentUser.id).order('date',{ascending:false}).order('saved_at',{ascending:false});
+    if(sesData)sessions=sesData.map(s=>({...s,reps:buildReps(s.session_results||[])}));
+  }catch(e){
+    sessions=[];
+  }
+  checkLocalImport();
+  nav('feed',document.getElementById('nav-feed'));
+}
+
+function buildReps(rows){
+  const reps=[];
+  rows.sort((a,b)=>a.rep_index-b.rep_index).forEach(r=>{reps[r.rep_index]={a:r.result||'',b:r.dist_time||'',c:r.recovery||''};});
+  return reps.filter(Boolean);
+}
+
+function checkLocalImport(){
+  const localSessions=ld('trckng_ath_sessions',[]);
+  if(localSessions.length>0&&sessions.length===0){
+    const banner=document.createElement('div');
+    banner.className='import-banner';banner.id='import-banner';
+    banner.innerHTML=`<div class="import-title">Import your existing data</div><div class="import-body">We found ${localSessions.length} session${localSessions.length!==1?'s':''} saved locally. Import them to your account so they're safe and available everywhere.</div><div class="import-btns"><button class="import-btn" onclick="dismissImport()">Skip</button><button class="import-btn primary" onclick="importLocalData()">Import now</button></div>`;
+    const feedCon=document.getElementById('feed-con');if(feedCon)feedCon.prepend(banner);
+  }
+}
+
+async function importLocalData(){
+  const localSessions=ld('trckng_ath_sessions',[]);
+  const localProfile=ld('trckng_ath_profile',{});
+  const banner=document.getElementById('import-banner');
+  if(banner)banner.innerHTML='<div class="import-title">Importing...</div>';
+  if(localProfile.name&&!(userProfile&&userProfile.name)){
+    await sb.from('profiles').update({name:localProfile.name,sport:localProfile.sport||'',event:localProfile.event||'',dob:localProfile.dob||null}).eq('id',currentUser.id);
+    userProfile={...userProfile,...localProfile};
+  }
+  for(const s of localSessions){
+    const {data:newSession,error}=await sb.from('sessions').insert({user_id:currentUser.id,date:s.date,type:s.type,completed:s.completed||'',notes:s.notes||'',quality:s.quality||null,saved_at:s.savedAt||new Date().toISOString()}).select().single();
+    if(!error&&newSession&&s.reps&&s.reps.length){
+      const repRows=s.reps.filter(r=>r.a||r.b||r.c).map((r,i)=>({session_id:newSession.id,rep_index:i,result:r.a||'',dist_time:r.b||'',recovery:r.c||''}));
+      if(repRows.length)await sb.from('session_results').insert(repRows);
+    }
+  }
+  localStorage.removeItem('trckng_ath_sessions');
+  localStorage.removeItem('trckng_ath_profile');
+  showToast('Import complete');
+  await loadData();
+}
+
+function dismissImport(){const b=document.getElementById('import-banner');if(b)b.remove();}
+
+
 
 function calcStreak(){
   if(!sessions.length)return{current:0,best:0};
