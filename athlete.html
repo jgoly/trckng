@@ -189,32 +189,105 @@ textarea::placeholder{color:var(--text3);}
 .import-btns{display:flex;gap:8px;}
 .import-btn{flex:1;padding:9px;border-radius:var(--radius);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;border:0.5px solid var(--border2);background:none;color:var(--text2);}
 .import-btn.primary{background:var(--blue-text);color:var(--bg3);border-color:var(--blue-text);}
+
+/* AUTH */
+.auth-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 24px;}
+.auth-logo{font-family:'DM Mono',monospace;font-size:36px;font-weight:500;letter-spacing:-2px;color:var(--text);margin-bottom:8px;}
+.auth-logo span{color:var(--green);}
+.auth-sub{font-size:11px;color:var(--green);font-family:'DM Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:40px;}
+.auth-card{width:100%;max-width:320px;}
+.auth-title{font-size:18px;font-weight:500;color:var(--text);margin-bottom:8px;text-align:center;}
+.auth-body{font-size:13px;color:var(--text2);text-align:center;margin-bottom:28px;line-height:1.6;}
+.auth-input{width:100%;padding:13px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg-card);font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);margin-bottom:12px;-webkit-appearance:none;text-align:center;}
+.auth-input:focus{outline:none;border-color:var(--green);}
+.auth-input::placeholder{color:var(--text3);text-align:center;}
+.auth-btn{width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:12px;}
+.auth-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.auth-link{width:100%;padding:10px;background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;display:block;}
+.auth-link:hover{color:var(--text2);}
+.auth-note{font-size:12px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.6;}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:28px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);transition:all 0.15s;}
+.pin-dot.filled{background:var(--green);border-color:var(--green);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.pin-key{padding:18px 8px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg-card);font-size:22px;font-weight:400;cursor:pointer;font-family:'DM Mono',monospace;color:var(--text);text-align:center;-webkit-tap-highlight-color:transparent;}
+.pin-key:active{background:var(--bg2);}
+.pin-key.del{font-size:16px;color:var(--text2);}
+.pin-key.empty{background:transparent;border-color:transparent;cursor:default;}
+.auth-success{background:var(--greenbg);border:0.5px solid var(--greenborder);border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:16px;}
+.auth-success-title{font-size:15px;font-weight:500;color:var(--green-text);margin-bottom:6px;}
+.auth-success-body{font-size:13px;color:var(--text2);line-height:1.6;}
+.auth-error{background:var(--redbg);border:0.5px solid var(--redborder);border-radius:var(--radius);padding:12px 14px;text-align:center;margin-bottom:12px;font-size:13px;color:var(--red-text);}
+
 </style>
 </head>
 <body>
 <div class="app" id="app">
 
-  <!-- AUTH -->
+
+  <!-- AUTH SCREEN -->
   <div class="screen active" id="screen-auth">
     <div class="auth-wrap">
       <div class="auth-logo">tr<span>ck</span>ng</div>
       <div class="auth-sub">athlete</div>
-      <div id="auth-form">
-        <h2 class="auth-title">Sign in</h2>
-        <p class="auth-body">Enter your email and we'll send you a magic link. No password needed. Your notes stay private.</p>
-        <input class="auth-input" id="auth-email" type="email" placeholder="your@email.com" autocomplete="email"/>
-        <button class="auth-btn" id="auth-btn" onclick="sendMagicLink()">Send magic link</button>
-        <p class="auth-note">Your session notes are encrypted and only visible to you.</p>
-      </div>
-      <div id="auth-sent" style="display:none;">
-        <div class="auth-success">
-          <div class="auth-success-title">Check your email</div>
-          <div class="auth-success-body">We've sent a sign-in link to your email. Tap it to sign in — the link expires in 1 hour.</div>
+      <div class="auth-card">
+
+        <!-- Step 1: Email -->
+        <div id="auth-step-email">
+          <div class="auth-title">Sign in</div>
+          <div class="auth-body">Enter your email to continue.</div>
+          <input class="auth-input" id="auth-email" type="email" placeholder="your@email.com" autocomplete="email" autocapitalize="none"/>
+          <div id="auth-email-error" class="auth-error" style="display:none;"></div>
+          <button class="auth-btn" id="auth-email-btn" onclick="submitEmail()">Continue</button>
         </div>
-        <p class="auth-note" style="margin-top:16px;">Didn't get it? <button style="background:none;border:none;color:var(--green);cursor:pointer;font-size:12px;font-family:DM Sans,sans-serif;padding:0;" onclick="document.getElementById('auth-sent').style.display='none';document.getElementById('auth-form').style.display='block'">Try again</button></p>
+
+        <!-- Step 2: Enter PIN -->
+        <div id="auth-step-pin" style="display:none;">
+          <div class="auth-title" id="pin-title">Enter your PIN</div>
+          <div class="auth-body" id="pin-body">Enter your 6-digit PIN to sign in.</div>
+          <div id="auth-pin-error" class="auth-error" style="display:none;"></div>
+          <div class="pin-dots">
+            <div class="pin-dot" id="pd0"></div>
+            <div class="pin-dot" id="pd1"></div>
+            <div class="pin-dot" id="pd2"></div>
+            <div class="pin-dot" id="pd3"></div>
+            <div class="pin-dot" id="pd4"></div>
+            <div class="pin-dot" id="pd5"></div>
+          </div>
+          <div class="pin-pad">
+            <button class="pin-key" onclick="pinKey('1')">1</button>
+            <button class="pin-key" onclick="pinKey('2')">2</button>
+            <button class="pin-key" onclick="pinKey('3')">3</button>
+            <button class="pin-key" onclick="pinKey('4')">4</button>
+            <button class="pin-key" onclick="pinKey('5')">5</button>
+            <button class="pin-key" onclick="pinKey('6')">6</button>
+            <button class="pin-key" onclick="pinKey('7')">7</button>
+            <button class="pin-key" onclick="pinKey('8')">8</button>
+            <button class="pin-key" onclick="pinKey('9')">9</button>
+            <button class="pin-key empty"></button>
+            <button class="pin-key" onclick="pinKey('0')">0</button>
+            <button class="pin-key del" onclick="pinDel()">⌫</button>
+          </div>
+          <button class="auth-link" onclick="showForgotPin()">Forgot PIN?</button>
+          <button class="auth-link" onclick="resetToEmail()">← Use a different email</button>
+        </div>
+
+        <!-- Step 3: Forgot PIN - magic link -->
+        <div id="auth-step-forgot" style="display:none;">
+          <div class="auth-title">Reset your PIN</div>
+          <div class="auth-body">We'll send a magic link to your email. Click it to sign in and set a new PIN.</div>
+          <button class="auth-btn" id="auth-reset-btn" onclick="sendResetLink()">Send magic link</button>
+          <button class="auth-link" onclick="showPinEntry()">← Back</button>
+          <div id="auth-reset-sent" style="display:none;" class="auth-success">
+            <div class="auth-success-title">Check your email</div>
+            <div class="auth-success-body">Tap the link in your email to sign in. You can then set a new PIN from the Account tab.</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
+
 
   <!-- LOADING -->
   <div class="screen" id="screen-loading">
@@ -366,6 +439,7 @@ textarea::placeholder{color:var(--text3);}
 <script>
 const SUPABASE_URL='https://jlithdmmdqlmxekhfwwp.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaXRoZG1tZHFsbXhla2hmd3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODUzODMsImV4cCI6MjA5MjA2MTM4M30.Ee80guMiN1Hx13EWo7XfmJJJyRh0ANODyV-ZrThVifs';
+const USER_ROLE='athlete';
 let sb;
 try{
   sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
@@ -404,17 +478,124 @@ let qlState={type:'Training',quality:null};
 function todayStr(){const t=new Date();return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;}
 function autoResize(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
 
-async function sendMagicLink(){
+
+/* AUTH STATE */
+let authEmail='';
+let pinEntry='';
+let isNewUser=false;
+
+async function submitEmail(){
   const email=document.getElementById('auth-email').value.trim();
-  if(!email){showToast('Enter your email first');return;}
-  const btn=document.getElementById('auth-btn');btn.disabled=true;btn.textContent='Sending...';
-  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:'https://jgoly.github.io/trckng/auth-callback'}});
-  if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Send magic link';return;}
-  document.getElementById('auth-form').style.display='none';
-  document.getElementById('auth-sent').style.display='block';
+  if(!email||!email.includes('@')){showAuthError('auth-email-error','Enter a valid email address');return;}
+  authEmail=email;
+  const btn=document.getElementById('auth-email-btn');
+  btn.disabled=true;btn.textContent='Checking...';
+  hideAuthError('auth-email-error');
+
+  // Check if user exists by trying to sign in with a dummy password
+  // If user doesn't exist, we'll create them
+  const {data,error}=await sb.auth.signInWithPassword({email,password:'__check__'});
+  btn.disabled=false;btn.textContent='Continue';
+
+  if(error&&error.message.includes('Invalid login credentials')){
+    // User exists, show PIN entry
+    isNewUser=false;
+    document.getElementById('pin-title').textContent='Enter your PIN';
+    document.getElementById('pin-body').textContent='Enter your 6-digit PIN to sign in.';
+    showStep('pin');
+  } else if(error&&(error.message.includes('Email not confirmed')||error.message.includes('not found')||error.message.toLowerCase().includes('user'))){
+    // New user - show PIN setup
+    isNewUser=true;
+    document.getElementById('pin-title').textContent='Create a PIN';
+    document.getElementById('pin-body').textContent='Choose a 6-digit PIN for this device. You'll use it every time you sign in.';
+    showStep('pin');
+  } else {
+    // Unexpected - just show PIN
+    isNewUser=false;
+    showStep('pin');
+  }
+  pinEntry='';
+  updatePinDots();
 }
 
+function pinKey(d){
+  if(pinEntry.length>=6)return;
+  pinEntry+=d;
+  updatePinDots();
+  if(pinEntry.length===6)setTimeout(submitPin,150);
+}
+
+function pinDel(){
+  pinEntry=pinEntry.slice(0,-1);
+  updatePinDots();
+}
+
+function updatePinDots(){
+  for(let i=0;i<6;i++){
+    const dot=document.getElementById('pd'+i);
+    if(dot)dot.classList.toggle('filled',i<pinEntry.length);
+  }
+}
+
+async function submitPin(){
+  hideAuthError('auth-pin-error');
+  const password='trckng-pin-'+pinEntry;
+
+  if(isNewUser){
+    // Sign up new user
+    const {data,error}=await sb.auth.signUp({email:authEmail,password});
+    if(error){
+      // User might already exist - try signing in
+      const {data:d2,error:e2}=await sb.auth.signInWithPassword({email:authEmail,password});
+      if(e2){showAuthError('auth-pin-error','Incorrect PIN. Try again.');pinEntry='';updatePinDots();return;}
+      currentUser=d2.user;await loadData();
+    } else if(data.user){
+      currentUser=data.user;
+      // Create profile
+      await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,role:USER_ROLE}).select().single();
+      await loadData();
+    }
+  } else {
+    // Sign in existing user
+    const {data,error}=await sb.auth.signInWithPassword({email:authEmail,password});
+    if(error){
+      showAuthError('auth-pin-error','Incorrect PIN. Try again.');
+      pinEntry='';updatePinDots();
+      return;
+    }
+    currentUser=data.user;await loadData();
+  }
+}
+
+async function sendResetLink(){
+  const btn=document.getElementById('auth-reset-btn');
+  btn.disabled=true;btn.textContent='Sending...';
+  const {error}=await sb.auth.signInWithOtp({
+    email:authEmail,
+    options:{emailRedirectTo:'https://jgoly.github.io/trckng/auth-callback'}
+  });
+  btn.disabled=false;btn.textContent='Send magic link';
+  if(error){showToast('Error: '+error.message);return;}
+  document.getElementById('auth-reset-sent').style.display='block';
+}
+
+function showStep(step){
+  ['email','pin','forgot'].forEach(s=>document.getElementById('auth-step-'+s).style.display=s===step?'block':'none');
+}
+function showForgotPin(){showStep('forgot');}
+function showPinEntry(){showStep('pin');}
+function resetToEmail(){showStep('email');pinEntry='';updatePinDots();}
+function showAuthError(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
+function hideAuthError(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+
 async function handleAuthState(){
+  // Check for magic link callback in URL (for forgot PIN flow)
+  const hash=window.location.hash;
+  if(hash&&(hash.includes('access_token')||hash.includes('type=recovery'))){
+    showScreen('loading');
+    const {data,error}=await sb.auth.getSession();
+    if(!error&&data.session){currentUser=data.session.user;await loadData();return;}
+  }
   showScreen('loading');
   const timeout=setTimeout(()=>{
     document.getElementById('loading-text').textContent='Connection slow — check your signal and try again.';
@@ -701,6 +882,7 @@ function renderProfile(){
     html+=`</div>`;
   }
   html+=`<button class="sbtn" style="background:none;color:var(--text2);border:0.5px solid var(--border2);margin-bottom:10px;" onclick="go('edit-profile')">${p.name?'Edit profile':'Set up profile'}</button>`;
+  html+=`<button class="sbtn" style="background:none;color:var(--text2);border:0.5px solid var(--border2);margin-bottom:10px;" onclick="showChangePinModal()">Change PIN</button>`;
   html+=`<button class="sbtn" style="background:none;color:var(--text2);border:0.5px solid var(--border2);margin-bottom:10px;" onclick="exportData()">Export data (JSON backup)</button>`;
   html+=`<button class="sbtn" style="background:none;color:var(--red-text);border:0.5px solid var(--redborder);" onclick="signOut()">Sign out</button>`;
   html+=`<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:16px;font-family:'DM Mono',monospace;">trckng athlete v1.0</div>`;
@@ -815,6 +997,15 @@ async function saveSession(){
   setTimeout(()=>nav('feed',document.getElementById('nav-feed')),700);
 }
 
+
+async function showChangePinModal(){
+  const newPin=prompt('Enter your new 6-digit PIN:');
+  if(!newPin||newPin.length!==6||!/^\d{6}$/.test(newPin)){showToast('PIN must be exactly 6 digits');return;}
+  const password='trckng-pin-'+newPin;
+  const {error}=await sb.auth.updateUser({password});
+  if(error){showToast('Error: '+error.message);return;}
+  showToast('PIN updated');
+}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',handleAuthState);}else{handleAuthState();}
