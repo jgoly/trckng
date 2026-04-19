@@ -525,33 +525,42 @@ async function submitPin(){
 
   // Try signing in first
   const {data,error}=await sb.auth.signInWithPassword({email:authEmail,password});
-  
+
   if(!error&&data.user){
-    // Existing user - signed in successfully
+    // Success - existing user signed in
     currentUser=data.user;
     await loadData();
     return;
   }
 
-  if(error&&(error.message.includes('Invalid login credentials')||error.message.includes('invalid_credentials'))){
-    // Wrong PIN for existing user
+  // Any error from signIn - could be wrong PIN or user doesn't exist
+  // Try to determine which by attempting signUp
+  const {data:d2,error:e2}=await sb.auth.signUp({email:authEmail,password});
+
+  if(!e2&&d2.user&&d2.user.identities&&d2.user.identities.length>0){
+    // New user created successfully
+    currentUser=d2.user;
+    await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,role:USER_ROLE}).select().single();
+    await loadData();
+    return;
+  }
+
+  if(!e2&&d2.user&&(!d2.user.identities||d2.user.identities.length===0)){
+    // User already exists - signUp returned but with empty identities
+    // This means the PIN was wrong
     showAuthError('auth-pin-error','Incorrect PIN. Try again or tap Forgot PIN.');
     pinEntry='';updatePinDots();
     return;
   }
 
-  // User not found - create new account
-  const {data:d2,error:e2}=await sb.auth.signUp({email:authEmail,password});
   if(e2){
-    showAuthError('auth-pin-error','Error: '+e2.message);
+    showAuthError('auth-pin-error','Error signing in. Please try again.');
     pinEntry='';updatePinDots();
     return;
   }
-  if(d2.user){
-    currentUser=d2.user;
-    await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,role:USER_ROLE}).select().single();
-    await loadData();
-  }
+
+  showAuthError('auth-pin-error','Something went wrong. Please try again.');
+  pinEntry='';updatePinDots();
 }
 
 async function sendResetLink(){
