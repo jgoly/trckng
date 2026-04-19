@@ -488,34 +488,15 @@ async function submitEmail(){
   const email=document.getElementById('auth-email').value.trim();
   if(!email||!email.includes('@')){showAuthError('auth-email-error','Enter a valid email address');return;}
   authEmail=email;
-  const btn=document.getElementById('auth-email-btn');
-  btn.disabled=true;btn.textContent='Checking...';
   hideAuthError('auth-email-error');
-
-  // Check if user exists by trying to sign in with a dummy password
-  // If user doesn't exist, we'll create them
-  const {data,error}=await sb.auth.signInWithPassword({email,password:'__check__'});
-  btn.disabled=false;btn.textContent='Continue';
-
-  if(error&&error.message.includes('Invalid login credentials')){
-    // User exists, show PIN entry
-    isNewUser=false;
-    document.getElementById('pin-title').textContent='Enter your PIN';
-    document.getElementById('pin-body').textContent='Enter your 6-digit PIN to sign in.';
-    showStep('pin');
-  } else if(error&&(error.message.includes('Email not confirmed')||error.message.includes('not found')||error.message.toLowerCase().includes('user'))){
-    // New user - show PIN setup
-    isNewUser=true;
-    document.getElementById('pin-title').textContent='Create a PIN';
-    document.getElementById('pin-body').textContent='Choose a 6-digit PIN for this device. You'll use it every time you sign in.';
-    showStep('pin');
-  } else {
-    // Unexpected - just show PIN
-    isNewUser=false;
-    showStep('pin');
-  }
+  // Skip user-exists check — go straight to PIN
+  // submitPin handles both new and existing users
+  isNewUser=false;
+  document.getElementById('pin-title').textContent='Enter your PIN';
+  document.getElementById('pin-body').textContent='Enter your 6-digit PIN. New to trckng? Choose any 6 digits to create your PIN.';
   pinEntry='';
   updatePinDots();
+  showStep('pin');
 }
 
 function pinKey(d){
@@ -539,31 +520,37 @@ function updatePinDots(){
 
 async function submitPin(){
   hideAuthError('auth-pin-error');
+  if(pinEntry.length<6)return;
   const password='trckng-pin-'+pinEntry;
 
-  if(isNewUser){
-    // Sign up new user
-    const {data,error}=await sb.auth.signUp({email:authEmail,password});
-    if(error){
-      // User might already exist - try signing in
-      const {data:d2,error:e2}=await sb.auth.signInWithPassword({email:authEmail,password});
-      if(e2){showAuthError('auth-pin-error','Incorrect PIN. Try again.');pinEntry='';updatePinDots();return;}
-      currentUser=d2.user;await loadData();
-    } else if(data.user){
-      currentUser=data.user;
-      // Create profile
-      await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,role:USER_ROLE}).select().single();
-      await loadData();
-    }
-  } else {
-    // Sign in existing user
-    const {data,error}=await sb.auth.signInWithPassword({email:authEmail,password});
-    if(error){
-      showAuthError('auth-pin-error','Incorrect PIN. Try again.');
-      pinEntry='';updatePinDots();
-      return;
-    }
-    currentUser=data.user;await loadData();
+  // Try signing in first
+  const {data,error}=await sb.auth.signInWithPassword({email:authEmail,password});
+  
+  if(!error&&data.user){
+    // Existing user - signed in successfully
+    currentUser=data.user;
+    await loadData();
+    return;
+  }
+
+  if(error&&(error.message.includes('Invalid login credentials')||error.message.includes('invalid_credentials'))){
+    // Wrong PIN for existing user
+    showAuthError('auth-pin-error','Incorrect PIN. Try again or tap Forgot PIN.');
+    pinEntry='';updatePinDots();
+    return;
+  }
+
+  // User not found - create new account
+  const {data:d2,error:e2}=await sb.auth.signUp({email:authEmail,password});
+  if(e2){
+    showAuthError('auth-pin-error','Error: '+e2.message);
+    pinEntry='';updatePinDots();
+    return;
+  }
+  if(d2.user){
+    currentUser=d2.user;
+    await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,role:USER_ROLE}).select().single();
+    await loadData();
   }
 }
 
