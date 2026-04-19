@@ -427,7 +427,7 @@ async function handleAuthState(){
     else showScreen('auth');
   }catch(err){
     clearTimeout(timeout);
-    document.getElementById('loading-text').textContent='Connection error. Check your signal and try again.';
+    document.getElementById('loading-text').textContent='Error: '+(err.message||err.toString()).slice(0,80);
     const retry=document.createElement('button');
     retry.textContent='Retry';retry.className='sbtn';retry.style.cssText='margin:16px auto;width:auto;padding:12px 32px;display:block;';
     retry.onclick=()=>{retry.remove();document.getElementById('loading-text').textContent='Loading...';handleAuthState();};
