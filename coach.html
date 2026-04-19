@@ -466,7 +466,14 @@ textarea::placeholder{color:var(--text3);}
         <div id="results-hint" style="font-size:12px;color:var(--text3);padding:10px 0 4px;font-style:italic;display:none;">Select athletes above to log individual results</div>
       </div>
       <div class="divider"></div>
-      <div class="fs"><label class="lbl">Date</label><input class="ifield" id="log-date" type="date" oninput="saveDraft()"/></div>
+      <div class="fs">
+        <label class="lbl">Date</label>
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+          <button onclick="setLogDate('today')" id="date-today-btn" style="flex:1;padding:7px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg-card);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);">Today</button>
+          <button onclick="setLogDate('yesterday')" id="date-yesterday-btn" style="flex:1;padding:7px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg-card);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);">Yesterday</button>
+        </div>
+        <input class="ifield" id="log-date" type="date" oninput="updateDateBtns();saveDraft()"/>
+      </div>
       <div class="fs">
         <label class="lbl">Session type</label>
         <div class="tsel" id="log-type-sel">
@@ -543,6 +550,7 @@ let sessions=[];
 let calMonth=null;
 let editingAthleteId=null;
 let calFilterDate=null;
+let lastUsedDate=null;
 let activeFilter='all';
 let searchQuery='';
 let logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
@@ -873,7 +881,7 @@ function renderFeed(){
   }
 
   let html='';
-  html+=`<input class="search-bar" placeholder="Search sessions..." oninput="searchQuery=this.value;renderFeed()" value="${searchQuery}"/>`;
+  html+=`<input class="search-bar" placeholder="Search sessions..." oninput="searchQuery=this.value;renderFeed()" value="${(searchQuery||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}"/>`;
   const types=['all','Training','Competition','S&C','Rest'];
   html+=`<div class="filter-row">`;
   types.forEach(t=>html+=`<button class="filter-btn${activeFilter===t?' active':''}" onclick="activeFilter='${t}';renderFeed()">${t==='all'?'All':t}</button>`);
@@ -934,8 +942,8 @@ function renderFeed(){
       const actsHtml=`<div class="sc-acts"><button class="ebtn" onclick="event.stopPropagation();editSession(${s.id})">Edit</button><button class="dbtn" onclick="event.stopPropagation();confirmDel(${s.id})">Delete</button></div><div class="cdel" id="cdel-${s.id}"><span>Delete this session?</span><button class="yes-del" onclick="event.stopPropagation();doDelete(${s.id})">Yes, delete</button><button onclick="event.stopPropagation();cancelDel(${s.id})">Cancel</button></div>`;
       html+=`<div class="sc" id="sc-${s.id}" data-date="${s.date}" style="${isFiltered?'border-color:var(--green);':''}" onclick="${showExpand?'toggleCard('+s.id+')':''}">
         <div class="sc-top"><div class="sc-meta"><span class="sdt">${ds}</span></div><span class="ttag ${TAGCLS[s.type]||'t-tr'}">${s.type}</span></div>
-        ${s.completed&&!isRest?`<div class="completed-line">${s.completed}</div>`:''}
-        ${s.notes?`<div class="sn-preview">${s.notes}</div><div class="sn-full">${s.notes}</div>`:''}
+        ${s.completed&&!isRest?`<div class="completed-line">${(s.completed||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`:''}
+        ${s.notes?`<div class="sn-preview">${s.notes.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><div class="sn-full">${s.notes.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`:''}
         <div class="sf"><span class="qbadge ${qClass(s.quality)}">${!isRest?qLabel(s.quality):'Rest'}</span><div class="ach">${chips}</div>${showExpand?`<span class="expand-hint">tap to expand</span>`:''}</div>
         ${showExpand?`<div class="sc-detail">${detailHtml}${actsHtml}</div>`:actsHtml}
       </div>`;
@@ -961,7 +969,8 @@ function confirmDel(id){document.getElementById('cdel-'+id).classList.add('show'
 function cancelDel(id){document.getElementById('cdel-'+id).classList.remove('show');}
 
 async function doDelete(id){
-  await sb.from('sessions').delete().eq('id',id);
+  const {error}=await sb.from('sessions').delete().eq('id',id);
+  if(error){showToast('Error deleting session');return;}
   sessions=sessions.filter(s=>s.id!==id);
   renderFeed();showToast('Session deleted');
 }
@@ -972,11 +981,11 @@ async function editSession(id){
   logState={type:s.type,quality:s.quality===undefined?null:s.quality,athletes:[...(s.athletes||[])],reps:JSON.parse(JSON.stringify(s.results||{})),editId:id};
   go('log');
   setTimeout(()=>{
-    document.getElementById('log-date').value=s.date;
+    document.getElementById('log-date').value=s.date;setTimeout(updateDateBtns,50);
     document.getElementById('log-completed').value=s.completed||'';
     document.getElementById('log-notes').value=s.notes||'';
     document.getElementById('log-title').textContent='Edit session';
-    document.getElementById('save-session-btn').textContent='Update session';
+    const saveBtn=document.getElementById('save-session-btn');if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='Update session';}isSaving=false;
     document.getElementById('draft-banner').style.display='none';
     syncTypeBtns('log-type-sel',s.type);syncQBtns('quality-sel',s.quality===undefined?null:s.quality);
     toggleRestFields(s.type==='Rest');renderChecklist();renderRepBlocks();
@@ -1103,8 +1112,11 @@ function confirmDelAthlete(id){document.getElementById('cadel-'+id).classList.ad
 function cancelDelAthlete(id){document.getElementById('cadel-'+id).classList.remove('show');}
 
 async function doDeleteAthlete(id){
-  await sb.from('coach_athletes').delete().eq('id',id);
+  const {error}=await sb.from('coach_athletes').delete().eq('id',id);
+  if(error){showToast('Error removing athlete');return;}
   athletes=athletes.filter(a=>a.id!==id);
+  // Remove from any sessions in memory
+  sessions.forEach(s=>{if(s.athletes)s.athletes=s.athletes.filter(aid=>aid!==id);});
   renderAthletes();showToast('Athlete removed');
 }
 
@@ -1177,7 +1189,7 @@ function initLog(){
   const draft=loadDraft();
   if(draft){
     logState={type:draft.type,quality:draft.quality,athletes:draft.athletes||[],reps:draft.reps||{},editId:null};
-    document.getElementById('log-date').value=draft.date||todayStr();
+    document.getElementById('log-date').value=draft.date||todayStr();setTimeout(updateDateBtns,50);
     document.getElementById('log-completed').value=draft.completed||'';
     document.getElementById('log-notes').value=draft.notes||'';
     document.getElementById('log-title').textContent='Log session';
@@ -1187,7 +1199,7 @@ function initLog(){
     toggleRestFields(draft.type==='Rest');
     setTimeout(()=>{const ta1=document.getElementById('log-completed');const ta2=document.getElementById('log-notes');if(ta1&&ta1.value)autoResize(ta1);if(ta2&&ta2.value)autoResize(ta2);},50);
   } else {
-    document.getElementById('log-date').value=todayStr();
+    document.getElementById('log-date').value=lastUsedDate||todayStr();setTimeout(updateDateBtns,50);
     document.getElementById('log-completed').value='';
     document.getElementById('log-notes').value='';
     document.getElementById('log-completed').placeholder=CPH['Training'];
@@ -1203,6 +1215,25 @@ function initLog(){
   renderChecklist();renderRepBlocks();
 }
 
+
+function setLogDate(when){
+  const d=new Date();
+  if(when==='yesterday')d.setDate(d.getDate()-1);
+  const str=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('log-date').value=str;
+  updateDateBtns();saveDraft();
+}
+
+function updateDateBtns(){
+  const val=document.getElementById('log-date').value;
+  const today=todayStr();
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yStr=`${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,'0')}-${String(yesterday.getDate()).padStart(2,'0')}`;
+  const todayBtn=document.getElementById('date-today-btn');
+  const yestBtn=document.getElementById('date-yesterday-btn');
+  if(todayBtn)todayBtn.style.cssText=`flex:1;padding:7px;border:0.5px solid ${val===today?'var(--green)':'var(--border)'};border-radius:var(--radius);background:${val===today?'var(--greenbg)':'var(--bg-card)'};font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:${val===today?'var(--green-text)':'var(--text2)'};`;
+  if(yestBtn)yestBtn.style.cssText=`flex:1;padding:7px;border:0.5px solid ${val===yStr?'var(--green)':'var(--border)'};border-radius:var(--radius);background:${val===yStr?'var(--greenbg)':'var(--bg-card)'};font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:${val===yStr?'var(--green-text)':'var(--text2)'};`;
+}
 function syncTypeBtns(selId,val){const sel=document.getElementById(selId);if(!sel)return;sel.querySelectorAll('.tbtn').forEach(b=>{b.classList.remove('sel');const m=b.getAttribute('onclick').match(/'([^']+)'/);if(m&&m[1]===val)b.classList.add('sel');});}
 function syncQBtns(selId,n){const sel=document.getElementById(selId);if(!sel)return;sel.querySelectorAll('.qsbtn').forEach(b=>{const isSkip=b.textContent.trim()==='Skip';b.className='qsbtn'+(isSkip?' skip':'');});if(n===null||n===undefined)return;const btns=Array.from(sel.querySelectorAll('.qsbtn:not(.skip)'));if(btns[n-1])btns[n-1].classList.add('s'+n);}
 function toggleRestFields(isRest){const detail=document.getElementById('session-detail-fields');const hint=document.getElementById('results-hint');if(detail)detail.style.display=isRest?'none':'block';if(isRest&&hint)hint.style.display='none';if(isRest){const w=document.getElementById('ath-results-wrap');if(w)w.innerHTML='';}}
@@ -1246,9 +1277,20 @@ function selQ(btn,n){logState.quality=n;syncQBtns('quality-sel',n);saveDraft();}
 
 async function saveSession(){
   if(isSaving)return;
-  const date=document.getElementById('log-date').value;if(!date){showToast('Pick a date first');return;}
+  const date=document.getElementById('log-date').value;
+  if(!date){showToast('Pick a date first');return;}
+  const dateObj=new Date(date+'T12:00:00');
+  if(isNaN(dateObj.getTime())||dateObj.getFullYear()<2000||dateObj.getFullYear()>2100){showToast('Invalid date');return;}
   isSaving=true;
-  const btn=document.getElementById('save-session-btn');btn.disabled=true;btn.textContent='Saving...';
+  const wasEdit=!!logState.editId;
+  const btn=document.getElementById('save-session-btn');
+
+  function resetBtn(){
+    isSaving=false;window._editingSession=false;
+    if(btn){btn.disabled=false;btn.textContent=wasEdit?'Update session':'Save session';}
+  }
+
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
   const isRest=logState.type==='Rest';
   const sessionData={
     user_id:currentUser.id,app_type:APP_TYPE,date,type:logState.type,
@@ -1259,42 +1301,41 @@ async function saveSession(){
     saved_at:new Date().toISOString()
   };
 
-  let savedSession;
-  if(logState.editId){
-    const {data,error}=await sb.from('sessions').update(sessionData).eq('id',logState.editId).select().single();
-    if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent=logState.editId?'Update session':'Save session';isSaving=false;window._editingSession=false;return;}
-    savedSession=data;
-    await sb.from('session_results').delete().eq('session_id',logState.editId);
-  } else {
-    const {data,error}=await sb.from('sessions').insert(sessionData).select().single();
-    if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Save session';isSaving=false;window._editingSession=false;return;}
-    savedSession=data;
-  }
-
-  const repRows=[];
-  if(!isRest){
-    Object.entries(logState.reps).forEach(([athId,reps])=>{
-      const aid=parseInt(athId);
-      (reps||[]).forEach((rep,i)=>{
-        if(rep.a||rep.b||rep.c)repRows.push({session_id:savedSession.id,athlete_id:aid,rep_index:i,result:rep.a||'',dist_time:rep.b||'',recovery:rep.c||''});
+  try{
+    let savedSession;
+    if(wasEdit){
+      const {data,error}=await sb.from('sessions').update(sessionData).eq('id',logState.editId).select().single();
+      if(error)throw new Error(error.message);
+      savedSession=data;
+      try{await sb.from('session_results').delete().eq('session_id',logState.editId);}catch(e){console.warn('delete results:',e);}
+    } else {
+      const {data,error}=await sb.from('sessions').insert(sessionData).select().single();
+      if(error)throw new Error(error.message);
+      savedSession=data;
+    }
+    if(!isRest&&savedSession){
+      const repRows=[];
+      Object.entries(logState.reps).forEach(([athId,reps])=>{
+        const aid=parseInt(athId);
+        (reps||[]).forEach((rep,i)=>{if(rep.a||rep.b||rep.c)repRows.push({session_id:savedSession.id,athlete_id:aid,rep_index:i,result:rep.a||'',dist_time:rep.b||'',recovery:rep.c||''});});
       });
-    });
-    if(repRows.length)await sb.from('session_results').insert(repRows);
+      if(repRows.length){try{await sb.from('session_results').insert(repRows);}catch(e){console.warn('insert results:',e);}}
+    }
+    const resultObj={...logState.reps};
+    if(wasEdit){const i=sessions.findIndex(s=>s.id===logState.editId);if(i>-1)sessions[i]={...savedSession,results:resultObj,session_results:[]};}
+    else sessions.unshift({...savedSession,results:resultObj,session_results:[]});
+    const savedDate=date;
+    clearDraft();
+    lastUsedDate=savedDate;
+    logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
+    resetBtn();
+    showToast(wasEdit?'Session updated':'Session saved');
+    setTimeout(()=>nav('feed',document.getElementById('nav-feed')),700);
+  }catch(err){
+    resetBtn();
+    showToast('Error: '+(err.message||'Something went wrong'));
   }
-
-  const resultObj=logState.reps;
-  if(logState.editId){const idx=sessions.findIndex(s=>s.id===logState.editId);if(idx>-1)sessions[idx]={...savedSession,results:resultObj,session_results:repRows};}
-  else sessions.unshift({...savedSession,results:resultObj,session_results:repRows});
-
-  clearDraft();
-  const wasEdit=!!logState.editId;
-  logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
-  window._editingSession=false;
-  isSaving=false;
-  showToast(wasEdit?'Session updated':'Session saved');
-  setTimeout(()=>nav('feed',document.getElementById('nav-feed')),700);
 }
-
 
 async function showChangePinModal(){
   const newPin=prompt('Enter your new 6-digit PIN:');
