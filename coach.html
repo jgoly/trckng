@@ -438,7 +438,15 @@ const SUPABASE_URL='https://jlithdmmdqlmxekhfwwp.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaXRoZG1tZHFsbXhla2hmd3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODUzODMsImV4cCI6MjA5MjA2MTM4M30.Ee80guMiN1Hx13EWo7XfmJJJyRh0ANODyV-ZrThVifs';
 let sb;
 try{
-  sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+    auth:{
+      storage:window.localStorage,
+      storageKey:'trckng-auth',
+      autoRefreshToken:true,
+      persistSession:true,
+      detectSessionInUrl:true
+    }
+  });
 }catch(e){
   console.error('Supabase init failed:',e);
 }
