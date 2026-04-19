@@ -440,6 +440,7 @@ textarea::placeholder{color:var(--text3);}
 const SUPABASE_URL='https://jlithdmmdqlmxekhfwwp.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaXRoZG1tZHFsbXhla2hmd3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODUzODMsImV4cCI6MjA5MjA2MTM4M30.Ee80guMiN1Hx13EWo7XfmJJJyRh0ANODyV-ZrThVifs';
 const USER_ROLE='athlete';
+const APP_TYPE='athlete';
 let sb;
 try{
   sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
@@ -647,7 +648,7 @@ async function loadData(){
   }
   document.getElementById('loading-text').textContent='Loading sessions...';
   try{
-    const {data:sesData}=await sb.from('sessions').select('*, session_results(*)').eq('user_id',currentUser.id).order('date',{ascending:false}).order('saved_at',{ascending:false});
+    const {data:sesData}=await sb.from('sessions').select('*, session_results(*)').eq('user_id',currentUser.id).eq('app_type',APP_TYPE).order('date',{ascending:false}).order('saved_at',{ascending:false});
     if(sesData)sessions=sesData.map(s=>({...s,reps:buildReps(s.session_results||[])}));
   }catch(e){
     sessions=[];
@@ -682,7 +683,7 @@ async function importLocalData(){
     userProfile={...userProfile,...localProfile};
   }
   for(const s of localSessions){
-    const {data:newSession,error}=await sb.from('sessions').insert({user_id:currentUser.id,date:s.date,type:s.type,completed:s.completed||'',notes:s.notes||'',quality:s.quality||null,saved_at:s.savedAt||new Date().toISOString()}).select().single();
+    const {data:newSession,error}=await sb.from('sessions').insert({user_id:currentUser.id,app_type:APP_TYPE,date:s.date,type:s.type,completed:s.completed||'',notes:s.notes||'',quality:s.quality||null,saved_at:s.savedAt||new Date().toISOString()}).select().single();
     if(!error&&newSession&&s.reps&&s.reps.length){
       const repRows=s.reps.filter(r=>r.a||r.b||r.c).map((r,i)=>({session_id:newSession.id,rep_index:i,result:r.a||'',dist_time:r.b||'',recovery:r.c||''}));
       if(repRows.length)await sb.from('session_results').insert(repRows);
@@ -808,7 +809,7 @@ async function saveQuickLog(){
   const date=document.getElementById('ql-date').value;if(!date){showToast('Pick a date first');return;}
   const btn=document.getElementById('ql-save-btn');btn.disabled=true;btn.textContent='Saving...';
   const qlResult=document.getElementById('ql-result').value.trim();
-  const {data,error}=await sb.from('sessions').insert({user_id:currentUser.id,date,type:qlState.type,completed:qlResult||'',notes:'',quality:qlState.type==='Rest'?null:qlState.quality,saved_at:new Date().toISOString()}).select().single();
+  const {data,error}=await sb.from('sessions').insert({user_id:currentUser.id,app_type:APP_TYPE,date,type:qlState.type,completed:qlResult||'',notes:'',quality:qlState.type==='Rest'?null:qlState.quality,saved_at:new Date().toISOString()}).select().single();
   if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Save';return;}
   sessions.unshift({...data,reps:[]});showToast('Saved');
   setTimeout(()=>nav('feed',document.getElementById('nav-feed')),600);
@@ -966,7 +967,7 @@ async function saveSession(){
   isSaving=true;
   const btn=document.getElementById('save-session-btn');btn.disabled=true;btn.textContent='Saving...';
   const isRest=logState.type==='Rest';
-  const sessionData={user_id:currentUser.id,date,type:logState.type,completed:isRest?'':document.getElementById('log-completed').value.trim(),notes:isRest?'':document.getElementById('log-notes').value.trim(),quality:isRest?null:logState.quality,saved_at:new Date().toISOString()};
+  const sessionData={user_id:currentUser.id,app_type:APP_TYPE,date,type:logState.type,completed:isRest?'':document.getElementById('log-completed').value.trim(),notes:isRest?'':document.getElementById('log-notes').value.trim(),quality:isRest?null:logState.quality,saved_at:new Date().toISOString()};
 
   let savedSession;
   if(logState.editId){

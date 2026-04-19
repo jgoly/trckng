@@ -510,6 +510,7 @@ textarea::placeholder{color:var(--text3);}
 const SUPABASE_URL='https://jlithdmmdqlmxekhfwwp.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaXRoZG1tZHFsbXhla2hmd3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODUzODMsImV4cCI6MjA5MjA2MTM4M30.Ee80guMiN1Hx13EWo7XfmJJJyRh0ANODyV-ZrThVifs';
 const USER_ROLE='coach';
+const APP_TYPE='coach';
 let sb;
 try{
   sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
@@ -774,7 +775,7 @@ async function importLocalData(){
   for(const s of localSessions){
     const mappedAthletes=(s.athletes||[]).map(id=>athMap[id]).filter(Boolean);
     const {data:newSession,error}=await sb.from('sessions').insert({
-      user_id:currentUser.id,date:s.date,type:s.type,completed:s.completed||'',
+      user_id:currentUser.id,app_type:APP_TYPE,date:s.date,type:s.type,completed:s.completed||'',
       notes:s.notes||'',quality:s.quality||null,athletes:mappedAthletes,
       saved_at:s.savedAt||new Date().toISOString()
     }).select().single();
@@ -1009,7 +1010,7 @@ async function saveQuickLog(){
   const btn=document.getElementById('ql-save-btn');btn.disabled=true;btn.textContent='Saving...';
   const qlResult=document.getElementById('ql-result').value.trim();
   const {data,error}=await sb.from('sessions').insert({
-    user_id:currentUser.id,date,type:qlState.type,
+    user_id:currentUser.id,app_type:APP_TYPE,date,type:qlState.type,
     completed:qlResult||'',notes:'',
     athletes:qlState.athletes,
     quality:qlState.type==='Rest'?null:qlState.quality,
@@ -1247,7 +1248,7 @@ async function saveSession(){
   const btn=document.getElementById('save-session-btn');btn.disabled=true;btn.textContent='Saving...';
   const isRest=logState.type==='Rest';
   const sessionData={
-    user_id:currentUser.id,date,type:logState.type,
+    user_id:currentUser.id,app_type:APP_TYPE,date,type:logState.type,
     completed:isRest?'':document.getElementById('log-completed').value.trim(),
     notes:isRest?'':document.getElementById('log-notes').value.trim(),
     athletes:isRest?[]:logState.athletes,
