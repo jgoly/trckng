@@ -485,7 +485,7 @@ async function sendMagicLink(){
   btn.disabled=true;btn.textContent='Sending...';
   const {error}=await sb.auth.signInWithOtp({
     email,
-    options:{emailRedirectTo:window.location.href}
+    options:{emailRedirectTo:'https://jgoly.github.io/trckng/auth-callback'}
   });
   if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Send magic link';return;}
   document.getElementById('auth-form').style.display='none';
@@ -521,8 +521,14 @@ async function handleAuthState(){
     return;
   }
   sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){currentUser=session.user;document.getElementById('loading-text').textContent='Loading your sessions...';showScreen('loading');await loadData();}
+    if(event==='SIGNED_IN'&&session&&!currentUser){
+      currentUser=session.user;
+      document.getElementById('loading-text').textContent='Loading your sessions...';
+      showScreen('loading');
+      await loadData();
+    }
     if(event==='SIGNED_OUT'){currentUser=null;athletes=[];sessions=[];showScreen('auth');}
+    if(event==='TOKEN_REFRESHED'&&session){currentUser=session.user;}
   });
 }
 
@@ -1114,6 +1120,20 @@ async function saveSession(){
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',handleAuthState);}else{handleAuthState();}
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&currentUser){
+    // Silently refresh current screen data without showing loading
+    const activeScreen=document.querySelector('.screen.active');
+    if(activeScreen){
+      const id=activeScreen.id;
+      if(id==='screen-feed')renderFeed();
+      if(id==='screen-calendar')renderCal();
+      if(id==='screen-athletes'&&typeof renderAthletes==='function')renderAthletes();
+      if(id==='screen-profile'&&typeof renderProfile==='function')renderProfile();
+    }
+  }
+});
 </script>
 </body>
 </html>

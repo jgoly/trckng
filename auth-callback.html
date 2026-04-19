@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>trckng — signing you in</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://jgoly.github.io/trckng/supabase.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--green:#4a9e56;--greenbg:rgba(74,158,86,0.15);--greenborder:rgba(74,158,86,0.5);--green-text:#7bc987;}
+body{font-family:'DM Sans',sans-serif;background:#0a0a0a;color:#f0ede8;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.wrap{max-width:360px;width:100%;text-align:center;}
+.logo{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;letter-spacing:-1px;margin-bottom:8px;}
+.logo span{color:var(--green);}
+.sub{font-size:11px;color:var(--green);font-family:'DM Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:48px;}
+.card{background:#161614;border:0.5px solid rgba(255,255,255,0.07);border-radius:12px;padding:28px 24px;}
+.status{font-size:15px;color:#f0ede8;margin-bottom:8px;font-weight:500;}
+.body{font-size:13px;color:#a8a8a0;line-height:1.6;margin-bottom:24px;}
+.btn{display:block;width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;text-align:center;margin-bottom:10px;}
+.btn-ghost{display:block;width:100%;padding:14px;background:none;color:#a8a8a0;border:0.5px solid rgba(255,255,255,0.14);border-radius:8px;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;text-align:center;}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:24px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes pulse{0%,80%,100%{opacity:0.3;}40%{opacity:1;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">tr<span>ck</span>ng</div>
+  <div class="sub">signing you in</div>
+  <div class="card" id="card">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="status">Completing sign in...</div>
+    <div class="body">Please wait a moment.</div>
+  </div>
+</div>
+<script>
+const SUPABASE_URL='https://jlithdmmdqlmxekhfwwp.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsaXRoZG1tZHFsbXhla2hmd3dwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0ODUzODMsImV4cCI6MjA5MjA2MTM4M30.Ee80guMiN1Hx13EWo7XfmJJJyRh0ANODyV-ZrThVifs';
+
+let sb;
+try{
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+    auth:{
+      storage:window.localStorage,
+      storageKey:'trckng-auth',
+      autoRefreshToken:true,
+      persistSession:true,
+      detectSessionInUrl:true
+    }
+  });
+}catch(e){console.error(e);}
+
+function showSuccess(role){
+  const card=document.getElementById('card');
+  const coachUrl='https://jgoly.github.io/trckng/coach';
+  const athleteUrl='https://jgoly.github.io/trckng/athlete';
+  const appUrl=role==='athlete'?athleteUrl:coachUrl;
+  const otherUrl=role==='athlete'?coachUrl:athleteUrl;
+  const appLabel=role==='athlete'?'athlete':'coach';
+  const otherLabel=role==='athlete'?'coach':'athlete';
+
+  card.innerHTML=`
+    <div style="font-size:32px;margin-bottom:16px;">✓</div>
+    <div class="status">You're signed in</div>
+    <div class="body">Tap below to open trckng. If you added it to your home screen, open it from there — your session will be waiting.</div>
+    <a href="${appUrl}" class="btn">Open trckng ${appLabel}</a>
+    <a href="${otherUrl}" class="btn-ghost">Open trckng ${otherLabel}</a>`;
+}
+
+function showError(){
+  const card=document.getElementById('card');
+  card.innerHTML=`
+    <div class="status">Something went wrong</div>
+    <div class="body">The sign-in link may have expired. Go back to the app and request a new one.</div>
+    <a href="https://jgoly.github.io/trckng" class="btn">Back to trckng</a>`;
+}
+
+async function handleCallback(){
+  if(!sb){showError();return;}
+  try{
+    const {data,error}=await sb.auth.getSession();
+    if(error)throw error;
+    if(data&&data.session){
+      // Determine role from profile
+      try{
+        const {data:prof}=await sb.from('profiles').select('role').eq('id',data.session.user.id).single();
+        showSuccess(prof&&prof.role?prof.role:'coach');
+      }catch(e){
+        showSuccess('coach');
+      }
+    } else {
+      // Try to exchange the token from URL
+      const {data:authData,error:authErr}=await sb.auth.exchangeCodeForSession(window.location.href);
+      if(authErr||!authData.session){showError();return;}
+      try{
+        const {data:prof}=await sb.from('profiles').select('role').eq('id',authData.session.user.id).single();
+        showSuccess(prof&&prof.role?prof.role:'coach');
+      }catch(e){
+        showSuccess('coach');
+      }
+    }
+  }catch(e){
+    showError();
+  }
+}
+
+handleCallback();
+</script>
+</body>
+</html>
