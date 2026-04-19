@@ -383,7 +383,7 @@ textarea::placeholder{color:var(--text3);}
 
   <!-- LOG SESSION -->
   <div class="screen" id="screen-log">
-    <div class="hdr"><button class="bbtn" onclick="go('feed')">← Back</button><span class="htitle" id="log-title">Log session</span><div style="width:80px"></div></div>
+    <div class="hdr"><button class="bbtn" onclick="window._editingSession=false;logState.editId=null;go('feed')">← Back</button><span class="htitle" id="log-title">Log session</span><div style="width:80px"></div></div>
     <div class="con">
       <div id="draft-banner" class="draft-banner" style="display:none;">Draft restored <button class="draft-clear" onclick="clearDraft()">Clear</button></div>
       <div class="fs"><label class="lbl">Date</label><input class="ifield" id="log-date" type="date" oninput="saveDraft()"/></div>
@@ -778,6 +778,7 @@ async function doDelete(id){await sb.from('sessions').delete().eq('id',id);sessi
 
 async function editSession(id){
   const s=sessions.find(x=>x.id===id);if(!s)return;
+  window._editingSession=true;
   logState={type:s.type,quality:s.quality===undefined?null:s.quality,reps:JSON.parse(JSON.stringify(s.reps||[{a:'',b:'',c:''}])),editId:id};
   go('log');
   setTimeout(()=>{
@@ -914,7 +915,7 @@ function exportData(){
 }
 
 function initLog(){
-  if(logState.editId)return;
+  if(window._editingSession)return;
   const draft=loadDraft();
   if(draft){
     logState={type:draft.type,quality:draft.quality,reps:draft.reps||[{a:'',b:'',c:''}],editId:null};
@@ -990,6 +991,7 @@ async function saveSession(){
 
   clearDraft();const wasEdit=!!logState.editId;
   logState={type:'Training',quality:null,reps:[{a:'',b:'',c:''}],editId:null};
+  window._editingSession=false;
   isSaving=false;showToast(wasEdit?'Session updated':'Session saved');
   setTimeout(()=>nav('feed',document.getElementById('nav-feed')),700);
 }

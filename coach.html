@@ -457,7 +457,7 @@ textarea::placeholder{color:var(--text3);}
 
   <!-- LOG SESSION -->
   <div class="screen" id="screen-log">
-    <div class="hdr"><button class="bbtn" onclick="go('feed')">← Back</button><span class="htitle" id="log-title">Log session</span><div style="width:80px"></div></div>
+    <div class="hdr"><button class="bbtn" onclick="window._editingSession=false;logState.editId=null;go('feed')">← Back</button><span class="htitle" id="log-title">Log session</span><div style="width:80px"></div></div>
     <div class="con">
       <div id="draft-banner" class="draft-banner" style="display:none;">Draft restored <button class="draft-clear" onclick="clearDraft()">Clear</button></div>
       <div class="fs">
@@ -968,6 +968,7 @@ async function doDelete(id){
 
 async function editSession(id){
   const s=sessions.find(x=>x.id===id);if(!s)return;
+  window._editingSession=true;
   logState={type:s.type,quality:s.quality===undefined?null:s.quality,athletes:[...(s.athletes||[])],reps:JSON.parse(JSON.stringify(s.results||{})),editId:id};
   go('log');
   setTimeout(()=>{
@@ -1170,7 +1171,9 @@ function exportData(){
 
 /* LOG FORM */
 function initLog(){
-  if(logState.editId)return;
+  // Only skip reset if actively editing (editId set by editSession)
+  // The editSession function sets a flag we check instead
+  if(window._editingSession)return;
   const draft=loadDraft();
   if(draft){
     logState={type:draft.type,quality:draft.quality,athletes:draft.athletes||[],reps:draft.reps||{},editId:null};
@@ -1259,12 +1262,12 @@ async function saveSession(){
   let savedSession;
   if(logState.editId){
     const {data,error}=await sb.from('sessions').update(sessionData).eq('id',logState.editId).select().single();
-    if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Update session';isSaving=false;return;}
+    if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent=logState.editId?'Update session':'Save session';isSaving=false;window._editingSession=false;return;}
     savedSession=data;
     await sb.from('session_results').delete().eq('session_id',logState.editId);
   } else {
     const {data,error}=await sb.from('sessions').insert(sessionData).select().single();
-    if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Save session';isSaving=false;return;}
+    if(error){showToast('Error: '+error.message);btn.disabled=false;btn.textContent='Save session';isSaving=false;window._editingSession=false;return;}
     savedSession=data;
   }
 
@@ -1286,6 +1289,7 @@ async function saveSession(){
   clearDraft();
   const wasEdit=!!logState.editId;
   logState={type:'Training',quality:null,athletes:[],reps:{},editId:null};
+  window._editingSession=false;
   isSaving=false;
   showToast(wasEdit?'Session updated':'Session saved');
   setTimeout(()=>nav('feed',document.getElementById('nav-feed')),700);
